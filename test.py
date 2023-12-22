@@ -1,1 +1,3 @@
-print('Hello world!')
+ola = "ooeeeoooaaaaoooo"
+
+print(ola.strip('o'))
