@@ -1,4 +1,4 @@
-class Artigo: wjhyviwvirvb
+class Artigo:
     #Construtor
     def __init__(self, nome, preco, tipologia, quantidade, vendedor):
         self.nome = nome

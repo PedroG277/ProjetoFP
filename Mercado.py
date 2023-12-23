@@ -12,4 +12,6 @@ def remover_artigo(self, artigo):
 
 #Mostra o nome, preço e quantidade do artigo recebido
 def mostrar_artigo(self, artigo):
+    print(artigo)
     pass
+

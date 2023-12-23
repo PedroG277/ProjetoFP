@@ -1,1 +1,17 @@
-a tua prima a voar
+panela elétrica;cozinha;8;Sofia
+vinil best of k-pop;musica;8;Joaquim
+frigideira;culinária;9;Paulo
+raquete de ténis;desporto;10;Ana
+guitarra;música;10;Manuel
+Monopoly;jogos;10;Paulo
+Bola;Desporto;10;Lucas
+Manta;Roupa;12;Eva
+telemóvel;tecnologia;15;Ana
+bola de futebol;desporto;16;António
+coluna;musica;19;Paulo
+casaco de inverno;moda;22;Cristina
+PS5;jogos;25;Manuel
+bicicleta;desporto;30;Pedro
+bilhete de avião para as Caraíbas;viagens;39;Sofia
+escultura em madeira;arte;40;Raquel
+quadro Van Gogh;arte;50;Manuel

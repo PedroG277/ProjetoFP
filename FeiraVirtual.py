@@ -104,11 +104,40 @@ class FeiraVirtual:
 
     #Início da feira. O grupo deve apresentar testes do projeto nesta função
     def main():
-        pass
-
-
-
-
-
-
-    main()
+        userPrompt = ">> "
+        voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
+        perguntaUtilizadores = " 1-Registo de Utilizadores\n" \
+            + " 2-Alteração de um utilizador\n" \
+            + " 3-Eliminação de conta de um utilizador\n" \
+            + " 4-Lista de utilizadores\n" \
+            + " 5-Mostrar artigos de um utilizador\n" \
+            + " 6-Mostrar interesses de um utilizador\n" \
+            + " 7-Mostrar Pycoins de um utilizador"
+        
+        closed = False
+        while not closed:
+            print("Bem vindo à Feira Virtual. Pretende aceder a: \n 1-Utilizadores \n 2-Artigos \n 3-Mercado")
+            match input(userPrompt):
+                case '1':
+                    print(perguntaUtilizadores, voltarOuSair)
+                    resposta = input(userPrompt)
+                    print("respondeu =", resposta)
+                    if resposta.upper() == 'S':
+                        closed = True
+                        continue
+                    if resposta.upper() == 'V':
+                        continue
+                
+                case '2':
+                    print("art")
+                    
+                case '3':
+                    print("merc")
+                
+                case _:
+                    print("Not a valid answer")
+            
+    
+    
+    if __name__ == "__main__":
+        main()
