@@ -4,8 +4,7 @@ frigideira;culinária;9;Paulo
 raquete de ténis;desporto;10;Ana
 guitarra;música;10;Manuel
 Monopoly;jogos;10;Paulo
-Bola;Desporto;10;Lucas
-Manta;Roupa;12;Eva
+fydgisa;rdufsu;12;dsfhsuf
 telemóvel;tecnologia;15;Ana
 bola de futebol;desporto;16;António
 coluna;musica;19;Paulo
