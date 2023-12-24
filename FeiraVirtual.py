@@ -1,6 +1,5 @@
 from Artigos import Artigo
 from Utilizadores import Utilizador
-import pickle
 
 class FeiraVirtual:    
     #Construtor
@@ -41,13 +40,18 @@ class FeiraVirtual:
                 else:
                     artigos = parametros[2].split('&')
 
-                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, artigos))
 
                 conjArtigos = []
+                ListaDeArtigosDoUtilizador = []
                 for l in range(len(artigos)):
                     conjArtigos.append(artigos[l].split(','))
                     if conjArtigos[l] != ['']:
-                        self.ListaArtigos.append(Artigo(conjArtigos[l][0], conjArtigos[l][1], conjArtigos[l][2], conjArtigos[l][3], vendedor))
+                        artigo = Artigo(conjArtigos[l][0], conjArtigos[l][1], conjArtigos[l][2], conjArtigos[l][3], vendedor)
+                        self.ListaArtigos.append(artigo)
+                        ListaDeArtigosDoUtilizador.append(artigo)
+                
+                
+                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador))
 
 
     #Elimina um utilizador
@@ -103,7 +107,7 @@ class FeiraVirtual:
                 file.write(f"{user.nome};{user.interesses};{user.artigos_disponiveis}\n")
 
     #Início da feira. O grupo deve apresentar testes do projeto nesta função
-    def main():
+    def main(self):
         userPrompt = ">> "
         voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
         perguntaUtilizadores = " 1-Registo de Utilizadores\n" \
@@ -116,12 +120,34 @@ class FeiraVirtual:
         
         closed = False
         while not closed:
-            print("Bem vindo à Feira Virtual. Pretende aceder a: \n 1-Utilizadores \n 2-Artigos \n 3-Mercado")
+            print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta")
             match input(userPrompt):
-                case '1':
+                case '1': #CAGUEI E NAO ACABEI ISTO PORQUE NAO TAVA MEMO A DAR
+                    logginin = True
+                    while logginin:
+                        inputNome = input("Nome de Utilizador:")
+                        for i in self.ListaUtilizadores:
+                            print(i.nome)
+                            if i.nome == inputNome:
+                                TheUtilizador = i
+                                foundUser = True
+                                break
+                        if not foundUser:
+                            print('Não existe uma conta com esse nome. Pode:\n1-Introduzir Novamente\n2-Criar Conta')
+                            resposta = input(userPrompt)
+                        if resposta == '1':
+                            break
+                        elif resposta == '2':
+                                logginin = False
+                                break
+
+
                     print(perguntaUtilizadores, voltarOuSair)
                     resposta = input(userPrompt)
                     print("respondeu =", resposta)
+                    if resposta == '4':
+                        for i in self.ListaUtilizadores:
+                            print(i.nome)
                     if resposta.upper() == 'S':
                         closed = True
                         continue
@@ -129,15 +155,22 @@ class FeiraVirtual:
                         continue
                 
                 case '2':
-                    print("art")
+                    self.listar_artigos()
                     
                 case '3':
                     print("merc")
                 
+
+
+
+                case 's':
+                    closed = True
+
+
                 case _:
-                    print("Not a valid answer")
+                    print("Not a valid input")
             
     
     
-    if __name__ == "__main__":
-        main()
+TheFeira = FeiraVirtual()
+TheFeira.main()
