@@ -106,13 +106,15 @@ class FeiraVirtual:
     def main():
         userPrompt = ">> "
         voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
-        perguntaUtilizadores = " 1-Registo de Utilizadores\n" \
+        perguntaUtilizadores = " Pretende aceder a: \n" \
+            + " 1-Registo de Utilizadores\n" \
             + " 2-Alteração de um utilizador\n" \
             + " 3-Eliminação de conta de um utilizador\n" \
             + " 4-Lista de utilizadores\n" \
             + " 5-Mostrar artigos de um utilizador\n" \
             + " 6-Mostrar interesses de um utilizador\n" \
             + " 7-Mostrar Pycoins de um utilizador"
+        perguntaArtigos = " Pretende aceder a: \n1 – Mostrar preço de um artigo \n 2 – Mostrar quantidade de um artigo \n 3 – Mostrar tipo de um artigo"
         
         closed = False
         while not closed:
@@ -129,7 +131,14 @@ class FeiraVirtual:
                         continue
                 
                 case '2':
-                    print("art")
+                    print(perguntaArtigos, voltarOuSair)
+                    resposta2 = input(userPrompt)
+                    print("respondeu =", resposta2)
+                    if resposta2.upper() == 'S':
+                        closed = True
+                        continue
+                    if resposta2.upper() == 'V':
+                        continue
                     
                 case '3':
                     print("merc")
