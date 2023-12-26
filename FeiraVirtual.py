@@ -1,11 +1,15 @@
+import os
+
 from Artigos import Artigo
 from Utilizadores import Utilizador
+from Mercado import Mercado
 
 class FeiraVirtual:    
     #Construtor
-    def __init__(self, ListaArtigos=[], ListaUtilizadores=[]):
+    def __init__(self, TheUtilizador = Utilizador('', [], [], 0), ListaArtigos=[], ListaUtilizadores=[]):
         self.ListaArtigos = ListaArtigos
         self.ListaUtilizadores = ListaUtilizadores
+        self.TheUtilizador = TheUtilizador
         self.importar_utilizadores('utilizadoresartigos.txt')
 
     #Adiciona um novo utilizador recebendo o nome, interesses e artigos
@@ -45,12 +49,12 @@ class FeiraVirtual:
                 for l in range(len(artigos)):
                     conjArtigos.append(artigos[l].split(','))
                     if conjArtigos[l] != ['']:
-                        artigo = Artigo(conjArtigos[l][0], conjArtigos[l][1], conjArtigos[l][2], conjArtigos[l][3], vendedor)
+                        artigo = Artigo(conjArtigos[l][0], int(conjArtigos[l][1]), conjArtigos[l][2], int(conjArtigos[l][3]), vendedor)
                         self.ListaArtigos.append(artigo)
                         ListaDeArtigosDoUtilizador.append(artigo)
                 
                 
-                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador))
+                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador, 50))
 
 
     #Elimina um utilizador
@@ -66,9 +70,17 @@ class FeiraVirtual:
 
     #Efetua uma compra de um artigo. O comprador e o vendedor são os nomes de dois utilizadores registados
     def comprar_artigo(self, comprador, vendedor, artigo):
-        self.comprador = comprador
-        self.vendedor = vendedor
-        self.artigo = artigo
+        if int(comprador.pycoins) < int(artigo.preco):
+            print('Não tem pycoins suficientes!')
+        else:
+            comprador.pycoins -= artigo.preco
+            vendedor.pycoins += artigo.preco
+            artigo.quantidade -= 1
+            if artigo.quantidade == 0:
+                self.ListaArtigos.remove(artigo)
+            print('Compra efetuada com sucesso!')
+            print('Saldo restante:', self.TheUtilizador.pycoins)
+
 
     #Calcula a reputação de um utilizador com base nas suas avaliações
     def calcular_reputacao(self, utilizador):
@@ -105,82 +117,97 @@ class FeiraVirtual:
             for user in self.ListaUtilizadores:
                 file.write(f"{user.nome};{user.interesses};{user.artigos_disponiveis}\n")
 
+    def LogIn(self):
+        def checkUser(UserName):
+            for i in self.ListaUtilizadores:
+                if i.nome == UserName:
+                    self.TheUtilizador = i
+                    return True
+            return False
+        
+
+        while not checkUser(input('Para fazer LogIn, introduza o seu nome de Utilizador:\n>> ')):
+            print('Não existe uma conta com esse nome. Pode:\n1-Introduzir Novamente\n2-Criar Conta')
+            resposta = input('>> ')
+            if resposta == '1':
+                os.system('cls')
+                continue
+            elif resposta == '2':
+                self.registar_utilizador()
+            os.system('cls')
+
+
+        
+        
+
     #Início da feira. O grupo deve apresentar testes do projeto nesta função
     def main(self):
         userPrompt = ">> "
         voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
-        perguntaUtilizadores = " Pretende aceder a: \n" \
-            + " 1-Registo de Utilizadores\n" \
+        perguntaUtilizadores = " 1-Registo de Utilizadores\n" \
             + " 2-Alteração de um utilizador\n" \
             + " 3-Eliminação de conta de um utilizador\n" \
             + " 4-Lista de utilizadores\n" \
             + " 5-Mostrar artigos de um utilizador\n" \
             + " 6-Mostrar interesses de um utilizador\n" \
             + " 7-Mostrar Pycoins de um utilizador"
-        perguntaArtigos = " Pretende aceder a: \n1 – Mostrar preço de um artigo \n 2 – Mostrar quantidade de um artigo \n 3 – Mostrar tipo de um artigo"
         
-        closed = False
-        while not closed:
+
+        def start():
             print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta")
             match input(userPrompt):
-                case '1': #CAGUEI E NAO ACABEI ISTO PORQUE NAO TAVA MEMO A DAR
-                    logginin = True
-                    while logginin:
-                        inputNome = input("Nome de Utilizador:")
-                        for i in self.ListaUtilizadores:
-                            print(i.nome)
-                            if i.nome == inputNome:
-                                TheUtilizador = i
-                                foundUser = True
-                                break
-                        if not foundUser:
-                            print('Não existe uma conta com esse nome. Pode:\n1-Introduzir Novamente\n2-Criar Conta')
-                            resposta = input(userPrompt)
-                        if resposta == '1':
-                            break
-                        elif resposta == '2':
-                                logginin = False
-                                break
+                case '1':
+                    os.system('cls')
+                    self.LogIn()
+                    home()
 
 
-                    print(perguntaUtilizadores, voltarOuSair) 
-                    resposta = input(userPrompt)
-                    print("respondeu =", resposta)
-                    if resposta == '4':
-                        for i in self.ListaUtilizadores:
-                            print(i.nome)
-                    if resposta.upper() == 'S':
-                        closed = True
-                        continue
-                    if resposta.upper() == 'V':
-                        continue
-                
+        
+        def home():
+            print("Olá,", self.TheUtilizador.nome, ". Pretende aceder a: \n 1-Navegar Loja \n 2-Espaço pessoal")
+            match input(userPrompt):
+                case '1':
+                    verLoja()
                 case '2':
-                    self.listar_artigos()
+                    espaçoPessoal()
 
-                    print(perguntaArtigos, voltarOuSair) #caga nisto q n tá de acordo c aquele guia q tá no one note, dps mudo o q for preciso :)
-                    resposta2 = input(userPrompt) #o meu cérebro já não tá capaz são quase 3 
-                    print("respondeu =", resposta2)
-                    if resposta2.upper() == 'S':
-                        closed = True
-                        continue
-                    if resposta2.upper() == 'V':
-                        continue
-                    
-                case '3':
-                    print("merc")
-                
+        
+        def verLoja():
+            print('Produtos disponíves na Loja:         PyCoins:', self.TheUtilizador.pycoins)
+            for artigo in self.ListaArtigos:
+                print(artigo.nome, artigo.preco)
 
-
-
+            print('Voltar: s; Ver apenas produtos dos meus interesses: i; Ver produto: escreva o nome do produto' )
+            escolha = input(userPrompt)
+            match escolha:
                 case 's':
-                    closed = True
-
-
+                    pass
+                case 'i':
+                    pass
                 case _:
-                    print("Not a valid input")
-            
-    
+                    for i in self.ListaArtigos:
+                        if escolha == i.nome:
+                            TheMercado.mostrar_artigo(i)
+                            print('1-Comprar Artigo\n2-Voltar')
+                            escolha = input(userPrompt)
+                            match escolha:
+                                case '1': #COMPRAR ARTIGO
+                                    for a in self.ListaUtilizadores:
+                                        if a.nome == i.vendedor:
+                                            vendedeiro = a
+                                            break
+
+                                    self.comprar_artigo(self.TheUtilizador, vendedeiro, i)
+                                    print('Pretende:\n1-Voltar à loja\n2-Sair')
+                                    match input('>> '):
+                                        case '1':
+                                            verLoja()
+
+
+
+        start()
+
     
 TheFeira = FeiraVirtual()
+TheMercado = Mercado()
 TheFeira.main()
