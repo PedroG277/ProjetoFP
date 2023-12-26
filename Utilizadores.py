@@ -22,13 +22,13 @@ class Utilizador:
         else:
             estrelas = "Não foi avaliado"
         
-        
-        # self.comentario = comentario
-        # comentario = int(input('Quer deixar o seu comentário? \n 1-Sim 2-Não'))
-        # if comentario == 1:
-        #     comentario = str(input('Deixe o seu comentário'))
-        # else:
-        #     comentario = "Não foi deixado nenhum comentário"
+        def deixar_comentario(self, comentario):
+            self.comentario = comentario
+            comentario = int(input('Quer deixar o seu comentário? \n 1-Sim 2-Não'))
+            if comentario == 1:
+                comentario = str(input('Deixe o seu comentário'))
+            else:
+                comentario = "Não foi deixado nenhum comentário"
         
     
     #Apresenta todas as avaliações e comentários
@@ -37,11 +37,11 @@ class Utilizador:
     
     #Apresenta todos os interesses
     def mostrar_interesses(self):
-        pass
+        print('Os interesses são:', self.interesses)
     
     #Apresenta todos os artigos
     def mostrar_artigos(self):
-        pass
+        print(self.artigos_disponiveis)
     
     #Altera o número de pycoins
     def alterar_pycoins(self, numero_pycoins):
@@ -50,5 +50,5 @@ class Utilizador:
     
     #Apresenta o número de pycoins
     def mostrar_pycoins(self):
-        pass
+        print('O seu número de pycoins é:', self.pycoins)
     

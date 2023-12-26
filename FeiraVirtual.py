@@ -13,14 +13,16 @@ class FeiraVirtual:
         self.importar_utilizadores('utilizadoresartigos.txt')
 
     #Adiciona um novo utilizador recebendo o nome, interesses e artigos
-    def registar_utilizador (self, nome, interesses, artigos_disponiveis):
+    def registar_utilizador (self, nome = '', interesses = '', artigos_disponiveis = ''):
         self.nome = nome
         self.interesses = interesses
         self.artigos_disponiveis = artigos_disponiveis
 
         nome = str(input('Insira o seu primeiro nome. Será o seu nome de utilizador.'))
         interesses = str(input('Insira os seus intereses.'))
-        artigos_disponiveis = str(input('Insira os ertigos que tem para venda'))
+        artigos_disponiveis = str(input('Insira os artigos que tem para venda'))
+        
+        self.ListaUtilizadores.append(Utilizador(nome, interesses, artigos_disponiveis, 50))
 
 
     #Importa uma lista de utilizadores a partir de um ficheiro
@@ -59,7 +61,8 @@ class FeiraVirtual:
 
     #Elimina um utilizador
     def eliminar_conta(self, nome_utilizador):
-        pass
+        os.system('cls')
+
 
 
     #Apresenta todos os artigos disponíveis ordenados por preço
@@ -107,7 +110,7 @@ class FeiraVirtual:
         with open(nome_ficheiro, "w") as file:
             artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: int(x.preco))
             for artigo in artigosOrdenados:
-                file.write(f"{artigo.nome};{artigo.tipologia};{artigo.preco};{artigo.vendedor}\n")
+                file.write(f"{artigo.nome};{artigo.preco};{artigo.tipologia};{artigo.quantidade};{artigo.vendedor}\n")
 
 
 
@@ -115,51 +118,128 @@ class FeiraVirtual:
     def exportar_utilizadores(self, nome_ficheiro):
         with open(nome_ficheiro, "w") as file:
             for user in self.ListaUtilizadores:
-                file.write(f"{user.nome};{user.interesses};{user.artigos_disponiveis}\n")
+                info = []
+                infoArtigos = []
+                for artigo in user.artigos_disponiveis:
+                    info = []
+                    info.append(artigo.nome)
+                    info.append(artigo.preco)
+                    info.append(artigo.tipologia)
+                    info.append(artigo.quantidade)
+
+                    infoArtigos.append(info)
+
+                file.write(f"{user.nome};{user.interesses};{infoArtigos}\n")
+
+
+    def GetUser(self, actionPrompt, adminExcept = 'Não pode fazer esta ação ao Administrador', notFoundExept =  'Não foi encontrado nenhum utilizador com esse nome.', logIn = False): #Entra uma string, sai 'admin' se admin, Utilizador (objeto) se nome válido, False se nome inválido
+        def checkUser(UserName):
+            if UserName == 'admin':
+                return 'admin'
+            else:
+                for i in self.ListaUtilizadores:
+                    if i.nome == UserName:
+                        return i
+                return False
+        
+        while True:
+            getuser = checkUser(input(actionPrompt + '\n>> '))
+            if isinstance(getuser, Utilizador):
+                return getuser
+            else:
+                if getuser == 'admin':
+                    if not logIn:
+                        print(adminExcept)
+                    else:
+                        return 'admin'
+                elif getuser == False:
+                    print(notFoundExept)
+
+                if not logIn:
+                    print('Pode:\n1-Introduzir novamente\n2-Cancelar')
+                    match input('>> '):
+                        case '1':
+                            os.system('cls')
+                            continue
+                        case '2':
+                            break
+                else:
+                    print('Pode:\n1-Introduzir novamente\n2-Criar Conta')
+                    match input('>> '):
+                        case '1':
+                            os.system('cls')
+                            continue
+                        case '2':
+                            self.registar_utilizador()
+                            break                    
+
 
     def LogIn(self):
-        def checkUser(UserName):
-            for i in self.ListaUtilizadores:
-                if i.nome == UserName:
-                    self.TheUtilizador = i
-                    return True
-            return False
+      return self.GetUser('Para fazer LogIn, introduza o seu nome de utilizador.', logIn=True)     
+            
         
-
-        while not checkUser(input('Para fazer LogIn, introduza o seu nome de Utilizador:\n>> ')):
-            print('Não existe uma conta com esse nome. Pode:\n1-Introduzir Novamente\n2-Criar Conta')
-            resposta = input('>> ')
-            if resposta == '1':
+    def adminPage(self):
+        os.system('cls')
+        print(" 1-Eliminação de conta de um utilizador\n" \
+            + " 2-Lista de utilizadores\n" \
+            + " 3-Mostrar artigos de um utilizador\n" \
+            + " 4-Mostrar interesses de um utilizador\n" \
+            + " 5-Mostrar Pycoins de um utilizador")
+        
+        match input('>> '):
+            case '1': #Eliminar utilizador
+                self.eliminar_conta('')
+                self.adminPage()
+                
+            case '2': #Listar/Exportar utilizadores
                 os.system('cls')
-                continue
-            elif resposta == '2':
-                self.registar_utilizador()
-            os.system('cls')
+                match input(('Pretende:\n1-Mostrar a lista de utilizadores\n2-Exportar a lista de utilizadores\n>> ')):
+                    case '1':
+                        pass
+                    case '2':
+                        self.exportar_utilizadores('users.txt')
+
+            case '3': #Mostrar artigos de um utilizador
+                user = self.GetUser('Introduza um utilizador para consultar os seus artigos.')
+                for artigo in user.artigos_disponiveis:
+                    print(artigo.nome)
+
+            case '4': #Mostrar interesses de um utilizador
+                user = self.GetUser('Introduza um utilizador para consultar os seus interesses.')
+                count = 0
+                conjInteresses = ''
+                for interesse in user.interesses:
+                    count += 1
+                    conjInteresses = conjInteresses + 'Interesse ' + str(count) + ': ' + interesse + ', '
+                print(conjInteresses.strip(', '))
 
 
-        
+            case '5':
+                user = self.GetUser('Introduza um utilizador para consultar as suas PyCoins.')
+                print(user.pycoins)
+
         
 
     #Início da feira. O grupo deve apresentar testes do projeto nesta função
     def main(self):
         userPrompt = ">> "
         voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
-        perguntaUtilizadores = " 1-Registo de Utilizadores\n" \
-            + " 2-Alteração de um utilizador\n" \
-            + " 3-Eliminação de conta de um utilizador\n" \
-            + " 4-Lista de utilizadores\n" \
-            + " 5-Mostrar artigos de um utilizador\n" \
-            + " 6-Mostrar interesses de um utilizador\n" \
-            + " 7-Mostrar Pycoins de um utilizador"
-        
+
 
         def start():
             print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta")
             match input(userPrompt):
                 case '1':
                     os.system('cls')
-                    self.LogIn()
-                    home()
+                    self.TheUtilizador = self.LogIn()
+                    if self.TheUtilizador == 'admin':
+                        self.adminPage()
+                    else:
+                        home()
+
+                case '2':
+                    os.system('cls')
+                    self.registar_utilizador()   
 
 
         
@@ -170,6 +250,8 @@ class FeiraVirtual:
                     verLoja()
                 case '2':
                     espaçoPessoal()
+
+                    
 
         
         def verLoja():
@@ -203,7 +285,26 @@ class FeiraVirtual:
                                             verLoja()
 
 
+        def espaçoPessoal(): #1-adicionar artigo,2-ver avaliações,3-alterar interesses,4-apagar conta
+            print("Pretende aceder a:\n1-Adicionar artigo \n 2-Ver avaliações \n 3-Alterar interesses \n 4-Apagar conta")
+            escolha = input(userPrompt)
+            match escolha:
+                case '1': #adicionar artigo
+                    self.colocar_artigo_para_venda(self.TheUtilizador, input('Nome:'), input('Preço:'), input('Tipologia:'), input('Quantidade:'))
+                case '2': #ver avaliações
+                    pass
+                case '3': #alterar interesses
+                    pass
+                case '4': #apagar conta
+                    pass
+                case _:
+                    pass
 
+
+
+
+
+        self.exportar_utilizadores('users.txt')
         start()
 
     
