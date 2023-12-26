@@ -1,9 +1,10 @@
 class Utilizador:
     #Construtor
-    def __init__(self, nome, interesses, artigos_disponiveis):
+    def __init__(self, nome, interesses, artigos_disponiveis, pycoins):
         self.nome = nome
         self.interesses = interesses
         self.artigos_disponiveis = artigos_disponiveis
+        self.pycoins = pycoins
     
     #Altera os interesses e/ou os artigos de um utilizador
     def editar_conta(self, novos_interesses, novos_artigos):
