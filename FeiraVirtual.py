@@ -32,7 +32,6 @@ class FeiraVirtual:
                 line = line.replace(']', '')
                 line = line.strip('\n')
 
-                Entry = []
                 parametros = line.split(';')
 
                 vendedor = parametros[0]
