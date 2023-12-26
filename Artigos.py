@@ -22,7 +22,7 @@ class Artigo:
     
     #Apresenta o preço do artigo
     def mostrar_preco(self):
-        pass
+        return self.preco
     
     #Altera a quantidade
     def editar_quantidade(self, nova_quantidade):
@@ -30,7 +30,7 @@ class Artigo:
     
     #Apresenta a quantidade do artigo
     def mostrar_quantidade(self):
-        pass
+        return self.quantidade
     
     #Altera a tipologia
     def editar_tipo (self, novo_tipo):

@@ -71,6 +71,7 @@ class FeiraVirtual:
 
     #Efetua uma compra de um artigo. O comprador e o vendedor são os nomes de dois utilizadores registados
     def comprar_artigo(self, comprador, vendedor, artigo):
+        os.system('cls')
         if int(comprador.pycoins) < int(artigo.preco):
             print('Não tem pycoins suficientes!')
         else:
@@ -94,7 +95,6 @@ class FeiraVirtual:
         self.preco = preco
         self.tipologia = tipologia
         self.quantidade = quantidade
-
 
         self.ListaArtigos.append(Artigo(self.artigo, self.preco, self.tipologia, self.quantidade, self.vendedor))        
 
@@ -175,8 +175,7 @@ class FeiraVirtual:
         
         def verLoja():
             print('Produtos disponíves na Loja:         PyCoins:', self.TheUtilizador.pycoins)
-            for artigo in self.ListaArtigos:
-                print(artigo.nome, artigo.preco)
+            self.listar_artigos()
 
             print('Voltar: s; Ver apenas produtos dos meus interesses: i; Ver produto: escreva o nome do produto' )
             escolha = input(userPrompt)

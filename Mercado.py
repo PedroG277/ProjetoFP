@@ -1,3 +1,5 @@
+import os
+from Artigos import Artigo
 class Mercado:
     #Construtor
     def __init__(self):
@@ -13,5 +15,6 @@ class Mercado:
 
     #Mostra o nome, preço e quantidade do artigo recebido
     def mostrar_artigo(self, artigo):
-        print(artigo.nome,'\nPreço:', artigo.preco, '\nUnidades disponíveis:', artigo.quantidade)
+        os.system('cls')
+        print(artigo.nome,'\nPreço:', artigo.mostrar_preco(), '\nQuantidade:', artigo.mostrar_quantidade())
 
