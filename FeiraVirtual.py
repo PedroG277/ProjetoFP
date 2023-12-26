@@ -145,30 +145,51 @@ class FeiraVirtual:
     def main(self):
         userPrompt = ">> "
         voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
-        perguntaUtilizadores = " 1-Registo de Utilizadores\n" \
+        perguntaUtilizadores = " Pretende aceder a: \n" \
+            + " 1-Registo de Utilizadores\n" \
             + " 2-Alteração de um utilizador\n" \
             + " 3-Eliminação de conta de um utilizador\n" \
             + " 4-Lista de utilizadores\n" \
             + " 5-Mostrar artigos de um utilizador\n" \
             + " 6-Mostrar interesses de um utilizador\n" \
             + " 7-Mostrar Pycoins de um utilizador"
+        perguntaArtigos = " Pretende aceder a: \n1 – Mostrar preço de um artigo \n 2 – Mostrar quantidade de um artigo \n 3 – Mostrar tipo de um artigo"
         
 
         def start():
             print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta")
             match input(userPrompt):
-                case '1':
-                    os.system('cls')
-                    self.LogIn()
-                    home()
+                case '1': #CAGUEI E NAO ACABEI ISTO PORQUE NAO TAVA MEMO A DAR
+                    logginin = True
+                    while logginin:
+                        inputNome = input("Nome de Utilizador:")
+                        for i in self.ListaUtilizadores:
+                            print(i.nome)
+                            if i.nome == inputNome:
+                                TheUtilizador = i
+                                foundUser = True
+                                break
+                        if not foundUser:
+                            print('Não existe uma conta com esse nome. Pode:\n1-Introduzir Novamente\n2-Criar Conta')
+                            resposta = input(userPrompt)
+                        if resposta == '1':
+                            break
+                        elif resposta == '2':
+                                logginin = False
+                                break
 
 
-        
-        def home():
-            print("Olá,", self.TheUtilizador.nome, ". Pretende aceder a: \n 1-Navegar Loja \n 2-Espaço pessoal")
-            match input(userPrompt):
-                case '1':
-                    verLoja()
+                    print(perguntaUtilizadores, voltarOuSair) 
+                    resposta = input(userPrompt)
+                    print("respondeu =", resposta)
+                    if resposta == '4':
+                        for i in self.ListaUtilizadores:
+                            print(i.nome)
+                    if resposta.upper() == 'S':
+                        closed = True
+                    if resposta.upper() == 'V':
+                        pass
+                
                 case '2':
                     espaçoPessoal()
 
