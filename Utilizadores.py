@@ -1,39 +1,30 @@
 class Utilizador:
     #Construtor
-    def __init__(self, nome, interesses, artigos_disponiveis, pycoins):#, reputacao, comentarios):
+    def __init__(self, nome, interesses, artigos_disponiveis, pycoins, avaliacoes_comentarios): #[[3, 'leccalecca'], [2, 'liccalicca']]
         self.nome = nome
         self.interesses = interesses
         self.artigos_disponiveis = artigos_disponiveis
         self.pycoins = pycoins
-        #self.reputacao = reputacao
-        #self.comentarios = comentarios
-    
+        self.avaliacoes_comentarios = avaliacoes_comentarios
     #Altera os interesses e/ou os artigos de um utilizador
     def editar_conta(self, novos_interesses, novos_artigos):
         self.novos_interesses = novos_interesses
         self.novos_artigos = novos_artigos
     
     #Adiciona uma nova avaliação, podendo incluir um comentário
-    def deixar_avaliacao(self, estrelas):
-        self.estrelas = estrelas
-        estrelas = int(input('Quer avaliar este utilizador? \n 1-Sim 2-Não'))
-        if estrelas == 1:
-            estrelas = int(input('Como quer avaliar este utilizador? \n Escolha entre 1-5 estrelas.'))
-        else:
-            estrelas = "Não foi avaliado"
+    def deixar_avaliacao(self, estrelas, comentario):
+        self.avaliacoes_comentarios.append([estrelas, comentario])
+
         
-        def deixar_comentario(self, comentario):
-            self.comentario = comentario
-            comentario = int(input('Quer deixar o seu comentário? \n 1-Sim 2-Não'))
-            if comentario == 1:
-                comentario = str(input('Deixe o seu comentário'))
-            else:
-                comentario = "Não foi deixado nenhum comentário"
-        
+       
     
-    #Apresenta todas as avaliações e comentários
+    #Apresenta todas as avaliações e comentários (juntos)
     def listar_avaliacoes(self):
-        pass
+        print(self.avaliacoes)
+        # for avaliacoes in range(self.avaliacoes):
+        #     print(avaliacoes)
+        # for comentarios in range(self.comentarios):
+        #     print(comentarios)    
     
     #Apresenta todos os interesses
     def mostrar_interesses(self):

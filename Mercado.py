@@ -16,5 +16,7 @@ class Mercado:
     #Mostra o nome, preço e quantidade do artigo recebido
     def mostrar_artigo(self, artigo):
         os.system('cls')
-        print(artigo.nome,'\nPreço:', artigo.mostrar_preco(), '\nQuantidade:', artigo.mostrar_quantidade())
+        print(artigo.nome)
+        artigo.mostrar_preco()
+        artigo.mostrar_quantidade()
 
