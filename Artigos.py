@@ -1,11 +1,12 @@
 class Artigo:
     #Construtor
-    def __init__(self, nome, preco, tipologia, quantidade, vendedor):
+    def __init__(self, nome, preco, tipologia, quantidade, vendedor, oferta):
         self.nome = nome
         self.preco = preco
         self.tipologia = tipologia
         self.quantidade = quantidade
         self.vendedor = vendedor
+        self.oferta = oferta
         
     
     #Altera o nome de um artigo para o novo nome recebido
@@ -14,7 +15,12 @@ class Artigo:
     
     #Altera o preço de um artigo de acordo com a percentagem dada
     def ajustar_preco(self, percentagem_alteracao):
+        self.preco = float(self.preco)
         self.preco = self.preco*(percentagem_alteracao/100)
+        if percentagem_alteracao < 100:
+            self.oferta = 'alta'
+        else:
+            self.oferta = 'baixa'
     
     #Altera o preço para o novo preço recebido
     def editar_preco(self, preco):

@@ -36,7 +36,7 @@ class FeiraVirtual:
             case '2':
                 artigos_disponiveis = []
 
-        self.exportar_tudo('exportTest.txt')
+        self.exportar_tudo('utilizadoresartigos.txt')
         self.TheUtilizador = novoUtilizador
 
     def setInteresses(self):
@@ -78,9 +78,13 @@ class FeiraVirtual:
                 for l in range(len(artigos)):
                     conjArtigos.append(artigos[l].split(','))
                     if conjArtigos[l] != ['']:
-                        artigo = Artigo(conjArtigos[l][0], int(conjArtigos[l][1]), conjArtigos[l][2], int(conjArtigos[l][3]), vendedor)
+                        artigo = Artigo(conjArtigos[l][0], float(conjArtigos[l][1]), conjArtigos[l][2], int(conjArtigos[l][3]), vendedor, 'original')
                         self.ListaArtigos.append(artigo)
                         ListaDeArtigosDoUtilizador.append(artigo)
+                        if int(conjArtigos[l][3]) <= 3:
+                            artigo.ajustar_preco(125)
+                        elif int(conjArtigos[l][3]) >= 10:
+                            artigo.ajustar_preco(75)
                 
                 try:
                     pycoins = parametros[3]
@@ -90,44 +94,71 @@ class FeiraVirtual:
                 try:
                     avcoms = parametros[4]
                     avcoms = avcoms.split('&')
-                    print(avcoms)
 
                     conjAvcoms = []
                     for m in range(len(avcoms)):
                         conjAvcoms.append(avcoms[m].split(','))
-                    print(conjAvcoms)
                 except IndexError:
                     conjAvcoms = []
                 
                 
-                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador, int(pycoins), conjAvcoms))
+                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador, float(pycoins), conjAvcoms))
 
 
     #Elimina um utilizador
     def eliminar_conta(self, nome_utilizador):
         os.system('cls')
 
+        while True:
+            utilizador_a_apagar = self.GetUser('Introduza o seu nome de utilizador para confirmar.', notFoundExept='Nome de utilizador incorreto!')
+            if utilizador_a_apagar.nome == self.TheUtilizador.nome:
+                break
+            else:
+                print('Nome de utilizador incorreto!!!!')
+            
+        for artigo in utilizador_a_apagar.artigos_disponiveis:
+            self.ListaArtigos.remove(artigo)
+
+        self.ListaUtilizadores.remove(utilizador_a_apagar)
+
+        self.exportar_tudo('utilizadoresartigos.txt')
 
 
     #Apresenta todos os artigos disponíveis ordenados por preço
     def listar_artigos(self):
-        artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: int(x.preco))
+        artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: float(x.preco))
         for j in artigosOrdenados:
             print(j.nome, j.preco)
 
     #Efetua uma compra de um artigo. O comprador e o vendedor são os nomes de dois utilizadores registados (e deixar um comentário)
     def comprar_artigo(self, comprador, vendedor, artigo):
         os.system('cls')
-        if int(comprador.pycoins) < int(artigo.preco):
+        if float(comprador.pycoins) < float(artigo.preco):
             print('Não tem pycoins suficientes!')
         else:
-            comprador.pycoins -= int(artigo.preco)
-            vendedor.pycoins += int(artigo.preco)
+            comprador.pycoins -= float(artigo.preco)
+            vendedor.pycoins += float(artigo.preco)
             artigo.quantidade -= 1
             if artigo.quantidade == 0:
                 self.ListaArtigos.remove(artigo)
                 vendedor.artigos_disponiveis.remove(artigo)
-            print('Compra efetuada com sucesso!')
+
+            if artigo.quantidade <= 3:
+                if artigo.oferta != 'baixa':
+                    if artigo.oferta == 'original':
+                        artigo.ajustar_preco(125)
+                    elif artigo.oferta == 'alta':
+                        artigo.preco = (artigo.preco)/0.75
+                        artigo.ajustar_preco(125)
+
+            elif artigo.quantidade >= 10:
+                if artigo.oferta != 'alta':
+                    if artigo.oferta == 'original':
+                        artigo.ajustar_preco(75)
+                    elif artigo.oferta == 'baixa':
+                        artigo.preco = artigo.preco/1.25
+                        artigo.ajustar_preco(75)
+
             print('Saldo restante:', self.TheUtilizador.pycoins)
             
             # deixar avaliação
@@ -135,17 +166,16 @@ class FeiraVirtual:
             if avaliacoes == 1:
                 avaliacoes = int(input('Como quer avaliar este utilizador? \n Escolha entre 1-5 estrelas.\n>> '))
             else:
-                avaliacoes = "Não foi avaliado" 
+                avaliacoes = 0
 
             comentario = int(input('Quer deixar o seu comentário? \n 1-Sim 2-Não\n>> '))
             if comentario == 1:
                 comentario = str(input('Deixe o seu comentário\n>> '))
             else:
-                comentario = "Não foi deixado nenhum comentário"
+                comentario = ''
            
             vendedor.deixar_avaliacao(avaliacoes, comentario)
 
-            #print(self.ListaUtilizadores[7].avaliacoes_comentarios)
 
     #Calcula a reputação de um utilizador com base nas suas avaliações
     def calcular_reputacao(self, utilizador):
@@ -157,11 +187,32 @@ class FeiraVirtual:
         self.artigo = artigo
         self.preco = preco
         self.tipologia = tipologia
-        self.quantidade = quantidade
+        self.quantidade = quantidade            
 
-        novoArtigo = Artigo(self.artigo, self.preco, self.tipologia, self.quantidade, self.vendedor)
+        novoArtigo = Artigo(self.artigo, self.preco, self.tipologia, self.quantidade, self.vendedor, 'original')
         self.ListaArtigos.append(novoArtigo)
-        vendedor.artigos_disponiveis.append(novoArtigo)        
+        vendedor.artigos_disponiveis.append(novoArtigo)   
+        print('O artigo foi adicionado com sucesso')  
+
+        quantidade_no_mercado = 0
+        for produto in self.ListaArtigos:
+            if produto.nome == novoArtigo.nome:
+                quantidade_no_mercado += int(produto.quantidade)
+                if int(produto.preco) < int(novoArtigo.preco):
+                    novoArtigo.preco = produto.preco
+                else:
+                    produto.preco = novoArtigo.preco
+
+        
+
+
+        print(quantidade_no_mercado)
+        if int(quantidade_no_mercado) <= 3:
+            novoArtigo.ajustar_preco(125)
+        if int(quantidade_no_mercado) >= 10:
+            novoArtigo.ajustar_preco(75)
+
+   
 
         
     #Encontra os nomes de utilizadores interessados no artigo recebido
@@ -171,7 +222,7 @@ class FeiraVirtual:
     #Exporta a lista de artigos para um ficheiro ordenados por quantidade
     def exportar_artigos_preco(self, nome_ficheiro):
         with open(nome_ficheiro, "w") as file:
-            artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: int(x.preco))
+            artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: float(x.preco))
             for artigo in artigosOrdenados:
                 file.write(f"{artigo.nome};{artigo.preco};{artigo.tipologia};{artigo.quantidade};{artigo.vendedor}\n")
 
@@ -189,6 +240,7 @@ class FeiraVirtual:
                     info.append(artigo.preco)
                     info.append(artigo.tipologia)
                     info.append(artigo.quantidade)
+                    info.append(artigo.oferta)
 
                     infoArtigos.append(info)
 
@@ -201,19 +253,29 @@ class FeiraVirtual:
                 interesses = (str(user.interesses).replace("'", "")).replace(" ", "")
                 artigos = '['
                 for artigo in user.artigos_disponiveis:
-                    artigos = artigos + f"{artigo.nome},{artigo.preco},{artigo.tipologia},{artigo.quantidade}&"
+                    precoOriginal = artigo.preco
+                    if artigo.oferta != "original":
+                        if artigo.oferta == "alta":
+                            precoOriginal = artigo.preco/0.75
+                        if artigo.oferta == "baixa":
+                            precoOriginal = artigo.preco/1.25
+
+                    artigos = artigos + f"{artigo.nome},{precoOriginal},{artigo.tipologia},{artigo.quantidade}&"
                 artigos = artigos.strip('&')
                 artigos += ']'
 
-                avaliacoes_comentarios = '['
-                for avcom in user.avaliacoes_comentarios:
-                    avaliacoes_comentarios = avaliacoes_comentarios + f"{avcom[0]},{avcom[1]}&"
-                avaliacoes_comentarios = avaliacoes_comentarios.strip('&')
-                avaliacoes_comentarios += ']'
-
+                try:
+                    user.avaliacoes_comentarios[0][1] #Se nao houver avaliaçoes e comentários guardados em lista [x, y], o  que existe neste lugar é [], que tem len 1 em vez de 2, logo não há avaliações
+                    avaliacoes_comentarios = '['
+                    for avcom in user.avaliacoes_comentarios:
+                        avaliacoes_comentarios = avaliacoes_comentarios + f"{avcom[0]},{avcom[1]}&"
+                    avaliacoes_comentarios = avaliacoes_comentarios.strip('&')
+                    avaliacoes_comentarios += ']'
+                except IndexError:
+                    avaliacoes_comentarios = []
+                    
                 file.write(f"{user.nome};{interesses};{artigos};{user.pycoins};{avaliacoes_comentarios}\n")
 
-                #user = Utilizador()
 
 
     def GetUser(self, actionPrompt, adminExcept = 'Não pode fazer esta ação ao Administrador', notFoundExept =  'Não foi encontrado nenhum utilizador com esse nome.', logIn = False): #Entra uma string, sai 'admin' se admin, Utilizador (objeto) se nome válido, False se nome inválido
@@ -272,7 +334,8 @@ class FeiraVirtual:
         
         match input('>> '):
             case '1': #Eliminar utilizador
-                self.eliminar_conta('')
+                nome_utilizador = str(input('Que utilizador deseja eliminar?\n>> '))
+                self.eliminar_conta(nome_utilizador)
                 self.adminPage()
                 
             case '2': #Listar/Exportar utilizadores
@@ -311,7 +374,7 @@ class FeiraVirtual:
 
 
         def start():
-            #os.system('cls')
+            os.system('cls')
             print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta \n 3-Sair da FeiraVirtual")
             match input(userPrompt):
                 case '1':
@@ -341,13 +404,13 @@ class FeiraVirtual:
                 case '2':
                     espaçoPessoal()
                 case '3':
-                    self.exportar_tudo('exportTest.txt')
+                    self.exportar_tudo('utilizadoresartigos.txt')
                     start()
 
-                    
 
         
         def verLoja():
+            os.system('cls')
             print('Produtos disponíves na Loja:         PyCoins:', self.TheUtilizador.pycoins)
             self.listar_artigos()
 
@@ -372,8 +435,7 @@ class FeiraVirtual:
                                         if a.nome == i.vendedor:
                                             vendedeiro = a
                                             break
-                        
-                                        
+        
                                     self.comprar_artigo(self.TheUtilizador, vendedeiro, i)
                                     print('Pretende:\n1-Voltar à loja\n2-Sair')
                                     match input('>> '):
@@ -391,19 +453,23 @@ class FeiraVirtual:
 
 
         def espaçoPessoal(): #1-adicionar artigo,2-ver avaliações,3-alterar interesses,4-apagar conta
-            os.system('cls')
-            print("Pretende aceder a:\n 1-Adicionar artigo \n 2-Ver avaliações \n 3-Alterar interesses \n 4-Apagar conta")
+            #os.system('cls')
+            print("Pretende aceder a:\n 1-Adicionar artigo \n 2-Ver avaliações \n 3-Alterar interesses \n 4-Apagar conta \n 5-Voltar")
             escolha = input(userPrompt)
             match escolha:
                 case '1': #adicionar artigo
                     self.colocar_artigo_para_venda(self.TheUtilizador, input('Nome:'), input('Preço:'), input('Tipologia:'), input('Quantidade:'))
+                    espaçoPessoal()
                 case '2': #ver avaliações
                     self.TheUtilizador.listar_avaliacoes()
                 case '3': #alterar interesses
                     self.TheUtilizador.interesses = self.setInteresses()
-                    #self.exportar_tudo('exportTest.txt')
+                    #self.exportar_tudo('utilizadoresartigos.txt')
                 case '4': #apagar conta
-                    pass
+                    self.eliminar_conta(self.TheUtilizador.nome)
+                    start()
+                case '5':
+                    home()
                 case _:
                     pass
 
@@ -411,7 +477,7 @@ class FeiraVirtual:
 
 
 
-        self.exportar_tudo('exportTest.txt')
+        self.exportar_tudo('utilizadoresartigos.txt')
         start()
 
     
