@@ -1,5 +1,4 @@
 import os
-
 from Artigos import Artigo
 from Utilizadores import Utilizador
 from Mercado import Mercado
@@ -19,15 +18,8 @@ class FeiraVirtual:
         self.artigos_disponiveis = artigos_disponiveis
 
         nome = str(input('Insira o seu primeiro nome. Será o seu nome de utilizador.\n>> '))
-        interesses = []
-        interesses.append(str(input('Insira os seus intereses.')))
-        while True:
-            novo_interesse = input('Pode introduzir outro interesse, ou escrever "s" para concluir.\n>> ')
-            match novo_interesse:
-                case 's':
-                    break
-                case _:
-                    interesses.append(novo_interesse)
+
+        interesses = self.setInteresses()
 
         novoUtilizador = Utilizador(nome, interesses, [], 50, [])
         self.ListaUtilizadores.append(novoUtilizador)
@@ -44,9 +36,20 @@ class FeiraVirtual:
             case '2':
                 artigos_disponiveis = []
 
-
-        
         self.exportar_tudo('exportTest.txt')
+        self.TheUtilizador = novoUtilizador
+
+    def setInteresses(self):
+        interesses = []
+        interesses.append(str(input('Insira os seus intereses.\n>> ')))
+        while True:
+            novo_interesse = input('Pode introduzir outro interesse, ou escrever "s" para concluir.\n>> ')
+            match novo_interesse:
+                case 's':
+                    break
+                case _:
+                    interesses.append(novo_interesse)
+        return interesses
 
 
     #Importa uma lista de utilizadores a partir de um ficheiro
@@ -79,8 +82,25 @@ class FeiraVirtual:
                         self.ListaArtigos.append(artigo)
                         ListaDeArtigosDoUtilizador.append(artigo)
                 
+                try:
+                    pycoins = parametros[3]
+                except IndexError:
+                    pycoins = 50
+
+                try:
+                    avcoms = parametros[4]
+                    avcoms = avcoms.split('&')
+                    print(avcoms)
+
+                    conjAvcoms = []
+                    for m in range(len(avcoms)):
+                        conjAvcoms.append(avcoms[m].split(','))
+                    print(conjAvcoms)
+                except IndexError:
+                    conjAvcoms = []
                 
-                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador, 50, []))
+                
+                self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador, int(pycoins), conjAvcoms))
 
 
     #Elimina um utilizador
@@ -101,24 +121,25 @@ class FeiraVirtual:
         if int(comprador.pycoins) < int(artigo.preco):
             print('Não tem pycoins suficientes!')
         else:
-            comprador.pycoins -= artigo.preco
-            vendedor.pycoins += artigo.preco
+            comprador.pycoins -= int(artigo.preco)
+            vendedor.pycoins += int(artigo.preco)
             artigo.quantidade -= 1
             if artigo.quantidade == 0:
                 self.ListaArtigos.remove(artigo)
+                vendedor.artigos_disponiveis.remove(artigo)
             print('Compra efetuada com sucesso!')
             print('Saldo restante:', self.TheUtilizador.pycoins)
             
             # deixar avaliação
-            avaliacoes = int(input('Quer avaliar este utilizador? \n 1-Sim 2-Não'))
+            avaliacoes = int(input('Quer avaliar este utilizador? \n 1-Sim 2-Não\n>> '))
             if avaliacoes == 1:
-                avaliacoes = int(input('Como quer avaliar este utilizador? \n Escolha entre 1-5 estrelas.'))
+                avaliacoes = int(input('Como quer avaliar este utilizador? \n Escolha entre 1-5 estrelas.\n>> '))
             else:
                 avaliacoes = "Não foi avaliado" 
 
-            comentario = int(input('Quer deixar o seu comentário? \n 1-Sim 2-Não'))
+            comentario = int(input('Quer deixar o seu comentário? \n 1-Sim 2-Não\n>> '))
             if comentario == 1:
-                comentario = str(input('Deixe o seu comentário'))
+                comentario = str(input('Deixe o seu comentário\n>> '))
             else:
                 comentario = "Não foi deixado nenhum comentário"
            
@@ -179,12 +200,20 @@ class FeiraVirtual:
             for user in self.ListaUtilizadores:
                 interesses = (str(user.interesses).replace("'", "")).replace(" ", "")
                 artigos = '['
-                
                 for artigo in user.artigos_disponiveis:
                     artigos = artigos + f"{artigo.nome},{artigo.preco},{artigo.tipologia},{artigo.quantidade}&"
                 artigos = artigos.strip('&')
                 artigos += ']'
-                file.write(f"{user.nome};{interesses};{artigos}\n")
+
+                avaliacoes_comentarios = '['
+                for avcom in user.avaliacoes_comentarios:
+                    avaliacoes_comentarios = avaliacoes_comentarios + f"{avcom[0]},{avcom[1]}&"
+                avaliacoes_comentarios = avaliacoes_comentarios.strip('&')
+                avaliacoes_comentarios += ']'
+
+                file.write(f"{user.nome};{interesses};{artigos};{user.pycoins};{avaliacoes_comentarios}\n")
+
+                #user = Utilizador()
 
 
     def GetUser(self, actionPrompt, adminExcept = 'Não pode fazer esta ação ao Administrador', notFoundExept =  'Não foi encontrado nenhum utilizador com esse nome.', logIn = False): #Entra uma string, sai 'admin' se admin, Utilizador (objeto) se nome válido, False se nome inválido
@@ -255,12 +284,12 @@ class FeiraVirtual:
                         self.exportar_utilizadores('users.txt')
 
             case '3': #Mostrar artigos de um utilizador
-                user = self.GetUser('Introduza um utilizador para consultar os seus artigos.')
+                user = self.GetUser('Introduza um utilizador para consultar os seus artigos.\n>> ')
                 for artigo in user.artigos_disponiveis:
                     print(artigo.nome)
 
             case '4': #Mostrar interesses de um utilizador
-                user = self.GetUser('Introduza um utilizador para consultar os seus interesses.')
+                user = self.GetUser('Introduza um utilizador para consultar os seus interesses.\n>> ')
                 count = 0
                 conjInteresses = ''
                 for interesse in user.interesses:
@@ -282,7 +311,8 @@ class FeiraVirtual:
 
 
         def start():
-            print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta")
+            #os.system('cls')
+            print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta \n 3-Sair da FeiraVirtual")
             match input(userPrompt):
                 case '1':
                     os.system('cls')
@@ -294,17 +324,25 @@ class FeiraVirtual:
 
                 case '2':
                     os.system('cls')
-                    self.registar_utilizador()   
+                    self.registar_utilizador() 
+                    home()  
 
+                case '3':
+                    os.system('cls')
+                    exit()
 
         
         def home():
-            print("Olá,", self.TheUtilizador.nome, ". Pretende aceder a: \n 1-Navegar Loja \n 2-Espaço pessoal")
+            os.system('cls')
+            print("Olá, ", self.TheUtilizador.nome, ". Pretende aceder a: \n 1-Navegar Loja \n 2-Espaço pessoal \n 3-Sair", sep='')
             match input(userPrompt):
                 case '1':
                     verLoja()
                 case '2':
                     espaçoPessoal()
+                case '3':
+                    self.exportar_tudo('exportTest.txt')
+                    start()
 
                     
 
@@ -317,12 +355,14 @@ class FeiraVirtual:
             escolha = input(userPrompt)
             match escolha:
                 case 's':
-                    pass
+                    home()
                 case 'i':
                     pass
                 case _:
+                    produtoEncontrado = False
                     for i in self.ListaArtigos:
                         if escolha == i.nome:
+                            produtoEncontrado = True
                             TheMercado.mostrar_artigo(i)
                             print('1-Comprar Artigo\n2-Voltar')
                             escolha = input(userPrompt)
@@ -332,7 +372,8 @@ class FeiraVirtual:
                                         if a.nome == i.vendedor:
                                             vendedeiro = a
                                             break
-
+                        
+                                        
                                     self.comprar_artigo(self.TheUtilizador, vendedeiro, i)
                                     print('Pretende:\n1-Voltar à loja\n2-Sair')
                                     match input('>> '):
@@ -343,8 +384,14 @@ class FeiraVirtual:
                                 case '2':
                                     verLoja()
 
+                    if not produtoEncontrado:
+                        os.system('cls')
+                        print("Não corresponde a nenhum produto da lista")
+                        verLoja()
+
 
         def espaçoPessoal(): #1-adicionar artigo,2-ver avaliações,3-alterar interesses,4-apagar conta
+            os.system('cls')
             print("Pretende aceder a:\n 1-Adicionar artigo \n 2-Ver avaliações \n 3-Alterar interesses \n 4-Apagar conta")
             escolha = input(userPrompt)
             match escolha:
@@ -353,7 +400,8 @@ class FeiraVirtual:
                 case '2': #ver avaliações
                     self.TheUtilizador.listar_avaliacoes()
                 case '3': #alterar interesses
-                    pass
+                    self.TheUtilizador.interesses = self.setInteresses()
+                    #self.exportar_tudo('exportTest.txt')
                 case '4': #apagar conta
                     pass
                 case _:

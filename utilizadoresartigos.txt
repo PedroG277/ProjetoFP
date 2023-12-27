@@ -5,6 +5,6 @@ Sofia;[jogos,música];[panela elétrica,8,cozinha,1&bilhete de avião para as Ca
 António;[viagens,cinema];[bola de futebol,16,desporto,1]
 Pedro;[cinema,culinária,tecnologia];[bicicleta,30,desporto,2]
 Raquel;[tecnologia,desporto,arte,livros];[escultura em madeira,40,arte,1]
-Paulo;[livros];[Monopoly,10,jogos,1&coluna,19,musica,1&frigideira,9,culinária,5]
+Paulo;[livros];[Monopoly,10,jogos,1&coluna,19,musica,1&frigideira,9,culinária,5];78;[5,ola&4,adeus]
 Joaquim;[jogos,música,cinema];[vinil best of k-pop,8,musica,2]
 Cristina;[moda,música,tecnologia];[casaco de inverno,22,moda,1]
