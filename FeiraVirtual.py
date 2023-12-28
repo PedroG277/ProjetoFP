@@ -54,7 +54,6 @@ class FeiraVirtual:
 
     #Importa uma lista de utilizadores a partir de um ficheiro
     def importar_utilizadores(self, nome_ficheiro):
-        ListaDados = []
         with open(nome_ficheiro, 'r') as file:
             for line in file:
                 line = line.replace('[', '')
@@ -81,10 +80,6 @@ class FeiraVirtual:
                         artigo = Artigo(conjArtigos[l][0], float(conjArtigos[l][1]), conjArtigos[l][2], int(conjArtigos[l][3]), vendedor, 'original')
                         self.ListaArtigos.append(artigo)
                         ListaDeArtigosDoUtilizador.append(artigo)
-                        if int(conjArtigos[l][3]) <= 3:
-                            artigo.ajustar_preco(125)
-                        elif int(conjArtigos[l][3]) >= 10:
-                            artigo.ajustar_preco(75)
                 
                 try:
                     pycoins = parametros[3]
@@ -97,12 +92,45 @@ class FeiraVirtual:
 
                     conjAvcoms = []
                     for m in range(len(avcoms)):
-                        conjAvcoms.append(avcoms[m].split(','))
+                        AvComSep = avcoms[m].split(',')
+                        conjAvcoms.append(AvComSep)
                 except IndexError:
-                    conjAvcoms = []
+                    conjAvcoms = ''
                 
                 
                 self.ListaUtilizadores.append(Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador, float(pycoins), conjAvcoms))
+
+        for artg in self.ListaArtigos:
+            self.definir_Ajustes_preco(artg)
+
+
+    def definir_Ajustes_preco(self, artigo):
+        quantidade_no_mercado = 0
+        artigosIguais = []
+        for produto in self.ListaArtigos:
+            if produto.nome == artigo.nome:
+                artigosIguais.append(produto)
+                #produto.oferta = 'original'
+                quantidade_no_mercado += int(produto.quantidade)
+                if int(produto.preco) < int(artigo.preco):
+                    artigo.preco = produto.preco
+                else:
+                    produto.preco = artigo.preco
+
+        
+        if int(quantidade_no_mercado) <= 3:
+            if produto.oferta != 'baixa':
+                ajustar = 125
+        elif int(quantidade_no_mercado) >= 10:
+            if produto.oferta != 'alta':
+                ajustar = 75
+
+        for produto in artigosIguais:
+            try:
+                produto.ajustar_preco(ajustar)
+            except UnboundLocalError:
+                continue
+
 
 
     #Elimina um utilizador
@@ -126,9 +154,22 @@ class FeiraVirtual:
 
     #Apresenta todos os artigos disponíveis ordenados por preço
     def listar_artigos(self):
-        artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: float(x.preco))
+        artigosParaMostrar = []
+        nomesUnicos = []
+        for artigo in self.ListaArtigos:
+            unico = True
+            for nome in nomesUnicos:
+                if artigo.nome == nome:
+                    unico = False
+                    break
+            if unico == True:
+                nomesUnicos.append(artigo.nome)
+                artigosParaMostrar.append(artigo)
+
+        artigosOrdenados = sorted(artigosParaMostrar, key=lambda x: float(x.preco))
         for j in artigosOrdenados:
             print(j.nome, j.preco)
+
 
     #Efetua uma compra de um artigo. O comprador e o vendedor são os nomes de dois utilizadores registados (e deixar um comentário)
     def comprar_artigo(self, comprador, vendedor, artigo):
@@ -143,21 +184,8 @@ class FeiraVirtual:
                 self.ListaArtigos.remove(artigo)
                 vendedor.artigos_disponiveis.remove(artigo)
 
-            if artigo.quantidade <= 3:
-                if artigo.oferta != 'baixa':
-                    if artigo.oferta == 'original':
-                        artigo.ajustar_preco(125)
-                    elif artigo.oferta == 'alta':
-                        artigo.preco = (artigo.preco)/0.75
-                        artigo.ajustar_preco(125)
+            self.definir_Ajustes_preco(artigo)
 
-            elif artigo.quantidade >= 10:
-                if artigo.oferta != 'alta':
-                    if artigo.oferta == 'original':
-                        artigo.ajustar_preco(75)
-                    elif artigo.oferta == 'baixa':
-                        artigo.preco = artigo.preco/1.25
-                        artigo.ajustar_preco(75)
 
             print('Saldo restante:', self.TheUtilizador.pycoins)
             
@@ -175,11 +203,32 @@ class FeiraVirtual:
                 comentario = ''
            
             vendedor.deixar_avaliacao(avaliacoes, comentario)
+            #print(vendedor.avaliacoes_comentarios)
 
 
     #Calcula a reputação de um utilizador com base nas suas avaliações
     def calcular_reputacao(self, utilizador):
-        pass
+        #print(utilizador.avaliacoes_comentarios)
+        if utilizador.avaliacoes_comentarios == [['']]:
+            return 'Este vendedor ainda não tem avaliações.'
+        else:
+            somaAval = 0
+            numAval = 0
+            for av in utilizador.avaliacoes_comentarios:
+                #print(av)
+                try:
+                    somaAval += int(av[0])
+                    if int(av[0]) != 0:
+                        numAval += 1
+                except ValueError:
+                    return 'Erro ao calcular reputação'
+
+            try:
+                reputação = somaAval/numAval
+                return reputação
+            except ZeroDivisionError:
+                return 'Erro ao calcular reputação'
+
 
     #Coloca um artigo à venda. O vendedor é o nome de um utilizador
     def colocar_artigo_para_venda(self, vendedor, artigo, preco, tipologia, quantidade):
@@ -189,30 +238,25 @@ class FeiraVirtual:
         self.tipologia = tipologia
         self.quantidade = quantidade            
 
-        novoArtigo = Artigo(self.artigo, self.preco, self.tipologia, self.quantidade, self.vendedor, 'original')
+        novoArtigo = Artigo(self.artigo, self.preco, self.tipologia, self.quantidade, self.vendedor.nome, 'original')
         self.ListaArtigos.append(novoArtigo)
-        vendedor.artigos_disponiveis.append(novoArtigo)   
-        print('O artigo foi adicionado com sucesso')  
+        vendedor.artigos_disponiveis.append(novoArtigo) 
 
-        quantidade_no_mercado = 0
-        for produto in self.ListaArtigos:
-            if produto.nome == novoArtigo.nome:
-                quantidade_no_mercado += int(produto.quantidade)
-                if int(produto.preco) < int(novoArtigo.preco):
-                    novoArtigo.preco = produto.preco
-                else:
-                    produto.preco = novoArtigo.preco
+        print('O artigo foi adicionado com sucesso') 
 
+        self.definir_Ajustes_preco(novoArtigo)
+
+
+        cidadaosInteressados = []
+        for cidadao in self.ListaUtilizadores:
+            for i in cidadao.interesses:
+                if i == novoArtigo.tipologia:
+                    cidadaosInteressados.append(cidadao)
+                    break
         
-
-
-        print(quantidade_no_mercado)
-        if int(quantidade_no_mercado) <= 3:
-            novoArtigo.ajustar_preco(125)
-        if int(quantidade_no_mercado) >= 10:
-            novoArtigo.ajustar_preco(75)
-
-   
+        print('Existem utilizadores possivelmente interessados no seu produto:')
+        for cidadointeressado in cidadaosInteressados:
+            print(cidadointeressado.nome)
 
         
     #Encontra os nomes de utilizadores interessados no artigo recebido
@@ -258,23 +302,30 @@ class FeiraVirtual:
                         if artigo.oferta == "alta":
                             precoOriginal = artigo.preco/0.75
                         if artigo.oferta == "baixa":
+                            #print(artigo.preco)
                             precoOriginal = artigo.preco/1.25
+                            
 
                     artigos = artigos + f"{artigo.nome},{precoOriginal},{artigo.tipologia},{artigo.quantidade}&"
                 artigos = artigos.strip('&')
                 artigos += ']'
 
-                try:
-                    user.avaliacoes_comentarios[0][1] #Se nao houver avaliaçoes e comentários guardados em lista [x, y], o  que existe neste lugar é [], que tem len 1 em vez de 2, logo não há avaliações
-                    avaliacoes_comentarios = '['
-                    for avcom in user.avaliacoes_comentarios:
-                        avaliacoes_comentarios = avaliacoes_comentarios + f"{avcom[0]},{avcom[1]}&"
-                    avaliacoes_comentarios = avaliacoes_comentarios.strip('&')
-                    avaliacoes_comentarios += ']'
-                except IndexError:
-                    avaliacoes_comentarios = []
-                    
+
+                avaliacoes_comentarios = '['
+                for i in user.avaliacoes_comentarios:
+                    try:
+                        avaliacoes_comentarios += f'{i[0]},{i[1]}&'
+                    except IndexError:
+                        continue
+                avaliacoes_comentarios = avaliacoes_comentarios.strip('&')
+                avaliacoes_comentarios += ']'
+                
+                #for avcom in user.avaliacoes_comentarios:
+                #        print(avcom)
+                        
                 file.write(f"{user.nome};{interesses};{artigos};{user.pycoins};{avaliacoes_comentarios}\n")
+
+
 
 
 
@@ -374,7 +425,7 @@ class FeiraVirtual:
 
 
         def start():
-            os.system('cls')
+            # os.system('cls')
             print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta \n 3-Sair da FeiraVirtual")
             match input(userPrompt):
                 case '1':
@@ -426,23 +477,60 @@ class FeiraVirtual:
                     for i in self.ListaArtigos:
                         if escolha == i.nome:
                             produtoEncontrado = True
-                            TheMercado.mostrar_artigo(i)
-                            print('1-Comprar Artigo\n2-Voltar')
+                            os.system('cls')
+                            print(i.nome, '          ', i.preco)
+                            print('------------\nVendedores:')
+                            ocorrenciasArtigo = []
+                            #devem aparecer os dados do artigo: preço, quantidade, vendedor
+                            for g in self.ListaArtigos:
+                                #print(g.nome)
+                                if g.nome == i.nome:
+                                    ocorrenciasArtigo.append(g)
+                                    for user in self.ListaUtilizadores:
+                                        if user.nome == g.vendedor:
+                                            vendedeiro = user
+                                            break
+                                        
+                                    print(g.vendedor,'\n  Reputação:', self.calcular_reputacao(vendedeiro),  '\n  Quantidade disponível:', g.quantidade)
+                                    
+                            print('------------\n1-Comprar Artigo\n2-Voltar')
                             escolha = input(userPrompt)
                             match escolha:
                                 case '1': #COMPRAR ARTIGO
-                                    for a in self.ListaUtilizadores:
-                                        if a.nome == i.vendedor:
-                                            vendedeiro = a
+                                    while True:
+                                        foundVendedor = False
+                                        vendedeiroEscolhido = input('Escreva o nome do vendedor a que quer comprar o artigo.\n >>')
+                                        for artigo in ocorrenciasArtigo:
+                                            if vendedeiroEscolhido == artigo.vendedor:
+                                                foundVendedor = True
+                                                
+                                                for a in self.ListaUtilizadores:
+                                                    if a.nome == vendedeiroEscolhido:
+                                                        vendedeiro = a
+                                                        for artigoDoVendedor in vendedeiro.artigos_disponiveis:
+                                                            if artigoDoVendedor.nome == artigo.nome:
+                                                                TheArtigo = artigoDoVendedor
+                                                                break
+                                                        break
+                                                    
+                                                self.comprar_artigo(self.TheUtilizador, vendedeiro, TheArtigo)
+                                                print('Pretende:\n1-Voltar à loja\n2-Sair')
+                                                match input('>> '):
+                                                    case '1':
+                                                        verLoja()
+                                                    case '2':
+                                                        home()
+                                                break
+                                        if foundVendedor == True:
                                             break
-        
-                                    self.comprar_artigo(self.TheUtilizador, vendedeiro, i)
-                                    print('Pretende:\n1-Voltar à loja\n2-Sair')
-                                    match input('>> '):
-                                        case '1':
-                                            verLoja()
-                                        case '2':
-                                            home()
+                                        
+                                        else:
+                                            match input('Não introduziu um vendedor válido. Pode:\n 1-Indroduzir novamente\n 2-Cancelar\n >>'):
+                                                case '1':
+                                                    continue
+                                                case '2':
+                                                    verLoja()
+                                                    break 
                                 case '2':
                                     verLoja()
 
@@ -472,7 +560,6 @@ class FeiraVirtual:
                     home()
                 case _:
                     pass
-
 
 
 
