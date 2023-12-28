@@ -425,7 +425,7 @@ class FeiraVirtual:
 
 
         def start():
-            # os.system('cls')
+            os.system('cls')
             print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta \n 3-Sair da FeiraVirtual")
             match input(userPrompt):
                 case '1':
@@ -541,7 +541,7 @@ class FeiraVirtual:
 
 
         def espaçoPessoal(): #1-adicionar artigo,2-ver avaliações,3-alterar interesses,4-apagar conta
-            #os.system('cls')
+            os.system('cls')
             print("Pretende aceder a:\n 1-Adicionar artigo \n 2-Ver avaliações \n 3-Alterar interesses \n 4-Apagar conta \n 5-Voltar")
             escolha = input(userPrompt)
             match escolha:
