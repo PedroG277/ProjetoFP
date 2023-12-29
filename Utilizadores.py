@@ -6,6 +6,7 @@ class Utilizador:
         self.artigos_disponiveis = artigos_disponiveis
         self.pycoins = 50
         self.avaliacoes_comentarios = []
+        self.reputacao = 0
     #Altera os interesses e/ou os artigos de um utilizador
     def editar_conta(self, novos_interesses, novos_artigos):
         self.novos_interesses = novos_interesses
@@ -41,5 +42,5 @@ class Utilizador:
     
     #Apresenta o número de pycoins
     def mostrar_pycoins(self):
-        print('O seu número de pycoins é:', self.pycoins)
+        print('Pycoins:', self.pycoins)
     

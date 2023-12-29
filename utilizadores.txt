@@ -1,0 +1,11 @@
+Eva;['dan�a', 'pedro'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];5.0
+Paulo;['livros'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];4.0
+Cristina;['moda', 'música', 'tecnologia'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];4.0
+Manuel;['arte', 'viagens'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];3.0
+Pedro;['cinema', 'culinaria', 'tecnologia'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];3.0
+Joaquim;['jogos', 'música', 'cinema'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];3.0
+Ana;['tecnologia', 'moda'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
+Silvia;['livros'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
+Sofia;['jogos', 'música'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
+António;['viagens', 'cinema'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
+Raquel;['tecnologia', 'desporto', 'arte', 'livros'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
