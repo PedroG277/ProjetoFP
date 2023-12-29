@@ -1,14 +1,20 @@
 class Artigo:
     #Construtor
-    def __init__(self, nome, preco, tipologia, quantidade, vendedor, oferta):
+    def __init__(self, nome, preco, tipologia, quantidade):
         self.nome = nome
         self.preco = preco
         self.tipologia = tipologia
         self.quantidade = quantidade
-        self.vendedor = vendedor
-        self.oferta = oferta
+        self.vendedor = 'nao existe um vendedor'
+        self.oferta = 'erro ao determinar oferta'
         
-    
+
+    def atribuirVendedor(self, vendedor):
+        self.vendedor = vendedor
+        
+    def atribuirOferta(self, oferta):
+        self.oferta = oferta
+
     #Altera o nome de um artigo para o novo nome recebido
     def editar_nome(self, nome):
         self.nome = nome

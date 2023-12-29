@@ -1,11 +1,11 @@
 class Utilizador:
     #Construtor
-    def __init__(self, nome, interesses, artigos_disponiveis, pycoins, avaliacoes_comentarios): #[[3, 'leccalecca'], [2, 'liccalicca']]
+    def __init__(self, nome, interesses, artigos_disponiveis): #[[3, 'leccalecca'], [2, 'liccalicca']]
         self.nome = nome
         self.interesses = interesses
         self.artigos_disponiveis = artigos_disponiveis
-        self.pycoins = pycoins
-        self.avaliacoes_comentarios = avaliacoes_comentarios
+        self.pycoins = 50
+        self.avaliacoes_comentarios = []
     #Altera os interesses e/ou os artigos de um utilizador
     def editar_conta(self, novos_interesses, novos_artigos):
         self.novos_interesses = novos_interesses
@@ -36,7 +36,7 @@ class Utilizador:
     
     #Altera o número de pycoins
     def alterar_pycoins(self, numero_pycoins):
-        self.numero_pycoins = numero_pycoins
+        self.pycoins = numero_pycoins
         
     
     #Apresenta o número de pycoins
