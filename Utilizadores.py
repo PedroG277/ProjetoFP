@@ -1,3 +1,4 @@
+import os
 class Utilizador:
     #Construtor
     def __init__(self, nome, interesses, artigos_disponiveis): #[[3, 'leccalecca'], [2, 'liccalicca']]
@@ -21,12 +22,18 @@ class Utilizador:
     
     #Apresenta todas as avaliações e comentários (juntos)
     def listar_avaliacoes(self):
-        print(self.avaliacoes_comentarios)
-        # for avaliacoes in range(self.avaliacoes):
-        #     print(avaliacoes)
-        # for comentarios in range(self.comentarios):
-        #     print(comentarios)    
-    
+        if self.avaliacoes_comentarios == []:
+            os.system('cls')
+            print('Ainda não tem avaliações!')
+
+        try:
+            for avaliacoes in self.avaliacoes_comentarios:
+                print('Estrelas:', str(avaliacoes[0]), '\nComentário:', str(avaliacoes[1]), '\n-----')
+        except IndexError:
+            os.system('cls')
+            print('Ainda não tem avaliações!')
+
+
     #Apresenta todos os interesses
     def mostrar_interesses(self):
         print('Os interesses são:', self.interesses)

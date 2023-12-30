@@ -1,16 +1,21 @@
-panela elétrica;cozinha;8;Sofia
-vinil best of k-pop;musica;8;Joaquim
-frigideira;culinária;9;Paulo
-raquete de ténis;desporto;10;Ana
-guitarra;música;10;Manuel
-Monopoly;jogos;10;Paulo
-fydgisa;rdufsu;12;dsfhsuf
-telemóvel;tecnologia;15;Ana
-bola de futebol;desporto;16;António
-coluna;musica;19;Paulo
-casaco de inverno;moda;22;Cristina
-PS5;jogos;25;Manuel
-bicicleta;desporto;30;Pedro
-bilhete de avião para as Caraíbas;viagens;39;Sofia
-escultura em madeira;arte;40;Raquel
-quadro Van Gogh;arte;50;Manuel
+bola de futebol;20.0;desporto;1;António
+escultura em madeira;50.0;arte;1;Raquel
+Monopoly;12.5;jogos;1;Paulo
+vinil best of k-pop;10.0;musica;1;Joaquim
+frigideira;8.0;culinaria;1;Joaquim
+frigideira;8.0;culinaria;1;Eva
+photocard do pedro;499.9875;artigos edição super limitada;1;fofuxa
+frigideira;8.0;gf;1;Gabriela
+fones;32.0;tecnologia;2;Joana
+cena;0.2337739703934369;cenas;2;Celia
+frigideira;8.0;f;2;Constança
+frigideira;8.0;culinaria;4;Cristina
+computador;12.0;tecnologia;4;Sergio
+liccalicca;4.0;bruh;4;ola
+disco voador;12.0;tecnologia;5;Henrique
+a tua prima;1.0;leccalecca;6;Henrique
+luccalucca;12.0;ola;7;Eva
+leccalecca;65.0;bruh;7;ola
+plinfone;3.75;ola;54;Eva
+ferrero;2.25;comida;90;Ambrósio
+fortnite;0.38011622428894043;jogos;123;Sergio

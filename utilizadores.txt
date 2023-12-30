@@ -1,11 +1,14 @@
-Eva;['dan�a', 'pedro'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];5.0
-Paulo;['livros'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];4.0
-Cristina;['moda', 'música', 'tecnologia'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];4.0
-Manuel;['arte', 'viagens'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];3.0
-Pedro;['cinema', 'culinaria', 'tecnologia'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];3.0
-Joaquim;['jogos', 'música', 'cinema'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];3.0
-Ana;['tecnologia', 'moda'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
-Silvia;['livros'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
-Sofia;['jogos', 'música'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
-António;['viagens', 'cinema'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
-Raquel;['tecnologia', 'desporto', 'arte', 'livros'];[['frigideira', 6.75, 'culinaria', 4, 'alta']];0
+Eva;['dança', 'pedro'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];5.0
+Paulo;['livros'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];4.0
+Cristina;['moda', 'música', 'tecnologia'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];4.0
+Joaquim;['boasideias', 'cenas'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];3.0
+Silvia;['livros'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Sofia;['jogos', 'música'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+António;['viagens', 'cinema'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Raquel;['tecnologia', 'desporto', 'arte', 'livros'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Sergio;['financas', 'excel', 'tecnologia'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Joana;['tecnologia', 'passear'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Celia;['adkadf', 'gdfaodjoad'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Henrique;['pizza'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+Ambrósio;['ferrerorocher'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0
+ola;['rer'];[['liccalicca', 4.0, 'bruh', 4, 'normal'], ['leccalecca', 65.0, 'bruh', 7, 'normal']];0

@@ -7,11 +7,11 @@ class Mercado:
 
     #Adiciona um novo artigo
     def adicionar_artigo(self, artigo):
-        pass
+        self.artigo = artigo
 
     #Elimina um artigo
     def remover_artigo(self, artigo):
-        pass
+        self.artigo = artigo
 
     #Mostra o nome, preço e quantidade do artigo recebido
     def mostrar_artigo(self, artigo):

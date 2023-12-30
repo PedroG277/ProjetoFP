@@ -8,10 +8,10 @@ class Artigo:
         self.vendedor = 'nao existe um vendedor'
         self.oferta = 'erro ao determinar oferta'
         
-
+    #atribui o vendedor ao artigo
     def atribuirVendedor(self, vendedor):
         self.vendedor = vendedor
-        
+    #atribui o nível de oferta/procura a um artigo    
     def atribuirOferta(self, oferta):
         self.oferta = oferta
 
