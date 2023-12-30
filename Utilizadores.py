@@ -21,7 +21,7 @@ class Utilizador:
     
     #Apresenta todas as avaliações e comentários (juntos)
     def listar_avaliacoes(self):
-        print(self.avaliacoes)
+        print(self.avaliacoes_comentarios)
         # for avaliacoes in range(self.avaliacoes):
         #     print(avaliacoes)
         # for comentarios in range(self.comentarios):

@@ -31,6 +31,7 @@ class Artigo:
     #Altera o preço para o novo preço recebido
     def editar_preco(self, preco):
         self.preco = preco
+        print('O novo preço do seu artigo é,', (self.preco))
     
     #Apresenta o preço do artigo
     def mostrar_preco(self):
@@ -39,6 +40,7 @@ class Artigo:
     #Altera a quantidade
     def editar_quantidade(self, nova_quantidade):
         self.quantidade = nova_quantidade
+        print('O seu artigo tem uma nova quantidade: ', nova_quantidade)
     
     #Apresenta a quantidade do artigo
     def mostrar_quantidade(self):
@@ -47,6 +49,8 @@ class Artigo:
     #Altera a tipologia
     def editar_tipo (self, novo_tipo):
         self.tipologia = novo_tipo
+        print('O seu artigo tem agora ', novo_tipo, ' como tipologia.')
+    
     
     #Apresenta a tipologia do artigo
     def mostrar_tipo (self):
