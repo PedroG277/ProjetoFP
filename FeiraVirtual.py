@@ -3,6 +3,10 @@ from Artigos import Artigo
 from Utilizadores import Utilizador
 from Mercado import Mercado
 
+def inputLower(strOriginal):
+    return input(strOriginal).lower()
+
+
 class FeiraVirtual:    
     #Construtor
     def __init__(self):
@@ -27,9 +31,9 @@ class FeiraVirtual:
     #Altera os interesses dos utilizadores. Faz uma sequência de inputs para o utilizador introduzir um a um, e parar quando escrever 's'. Devolve os interesses em forma de lista
     def setInteresses(self):
         interesses = []
-        interesses.append(str(input('Insira um interesse.' + self.userprompt)))
+        interesses.append(str(inputLower('Insira um interesse.' + self.userprompt))) 
         while True:
-            novo_interesse = input('Pode introduzir outro interesse, ou escrever "s" para concluir.' + self.userprompt)
+            novo_interesse = inputLower('Pode introduzir outro interesse, ou escrever "s" para concluir.' + self.userprompt)
             match novo_interesse:
                 case 's':
                     break
@@ -45,6 +49,7 @@ class FeiraVirtual:
                 line = line.replace('[', '')
                 line = line.replace(']', '')
                 line = line.strip('\n')
+                #os caracteres que são redundantes à separação dos dados são removidos
 
                 parametros = line.split(';')
 
@@ -58,14 +63,14 @@ class FeiraVirtual:
                 if parametros[2] == "\n": #o utilizador não tem produdos associados
                     artigos = ['']
                 else:
-                    artigos = parametros[2].split('&')
+                    artigos = parametros[2].split('&') #Extrai da linha do doc a info dos artigos nessa linha para uma lista em que cada elemento tem a forma 'nome,preco,tipologia,quantidade'
 
-                conjArtigos = []
+                infoArtigo = []
                 ListaDeArtigosDoUtilizador = []
                 for l in range(len(artigos)):
-                    conjArtigos.append(artigos[l].split(','))
-                    if conjArtigos[l] != ['']:
-                        artigo = Artigo(conjArtigos[l][0], float(conjArtigos[l][1]), conjArtigos[l][2], int(conjArtigos[l][3]))
+                    infoArtigo.append(artigos[l].split(',')) #Cada elemento da lista "artigo" é convertido numa lista em que cada elemento é um dado individual do artigo. Esta lista é colocada numa lista que irá conter todos os conjuntos de dados dos artigos a adicionar ao mercado e ao utilizador desta linha
+                    if infoArtigo[l] != ['']:
+                        artigo = Artigo(infoArtigo[l][0], float(infoArtigo[l][1]), infoArtigo[l][2], int(infoArtigo[l][3])) #com os dados extraídos é criado o artigo (objeto)
                         artigo.atribuirVendedor(vendedor)
                         artigo.atribuirOferta('normal')
                         self.ListaArtigos.append(artigo)
@@ -77,6 +82,7 @@ class FeiraVirtual:
                     pycoins = 50
 
                 try:
+                    #avcoms --> avaliações/comentários
                     avcoms = parametros[4]
                     avcoms = avcoms.split('&')
 
@@ -87,7 +93,7 @@ class FeiraVirtual:
                 except IndexError:
                     conjAvcoms = ''
                 
-                utilizador = Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador)
+                utilizador = Utilizador(vendedor, interesses, ListaDeArtigosDoUtilizador) #com os dados obtidos é criado o utilizador
 
                 utilizador.alterar_pycoins(float(pycoins))
                 utilizador.avaliacoes_comentarios = conjAvcoms
@@ -104,7 +110,14 @@ class FeiraVirtual:
             self.definir_Ajustes_preco_Procura(bruh)
             
 
-    #Ajusta o preço dos artigos de acordo com a quantidade total desse artigo no mercado (mercado dinâmico)
+
+    #Ajusta o preço dos artigos (de um mesmo nome) de acordo com a quantidade total desse artigo no mercado (mercado dinâmico)
+    #Para cumprir todos os cenários e eventuais exceções, segue os seguintes passos:
+            #Obtem todas as ocorrências do artigo no mercado
+            #Reajusta o preço para o origina (caso se aplique), e soma todas as quantidades individuais de cada vendedor (oferta total)
+            #Determina o preço mais baixo em relação a todos estes artigos
+            #Atribui o preço mais baixo a todos os artigos
+            #Aplica os ajustes percentuais em função da quantidade total no mercado
     def definir_Ajustes_preco_Procura(self, artigo): #criado por nós
         ocorrencias = self.getOcorrenciasArtigo(artigo.nome)
 
@@ -119,14 +132,15 @@ class FeiraVirtual:
         except IndexError:
             return
                 # -Todos a preço normal & quantidade total no mercado
- 
-        precoMaisBaixo = ocorrencias[0].preco
+        try:
+            precoMaisBaixo = ocorrencias[0].preco
+        except IndexError:
+            precoMaisBaixo = 99999
+
         for artigoRepetido in ocorrencias:                
             if float(artigoRepetido.preco) < precoMaisBaixo:
                 precoMaisBaixo = artigoRepetido.preco
         #sai deste ciclo o preço mais baixo
-                
-        print(precoMaisBaixo)
 
         #ajusta de acordo com o mercado dinâmico
         for ArtigoRepetido in ocorrencias:
@@ -142,7 +156,7 @@ class FeiraVirtual:
 
     #Elimina um utilizador
     def eliminar_conta(self, nome_utilizador):
-        if self.TheUtilizador == 'admin':
+        if self.TheUtilizador == 'admin': #Eliminar um utilizador com admninistrador (pode apagar qualquer utilizador existente)
             while True:
                 os.system('cls')
                 utilizador_a_apagar = self.getUser(nome_utilizador)
@@ -154,7 +168,7 @@ class FeiraVirtual:
                             return True
                         case '2':
                             return False
-        else:
+        else: #Eliminar um utilizador como utilizador normal. Só pode apagar a própria conta
             while True:
                 os.system('cls')
                 #Se um utilizador estiver logged in, só pode eliminar a sua própria conta
@@ -168,7 +182,7 @@ class FeiraVirtual:
                             continue
                         case '2':
                             return
-        #quando o utilizador é eliminado os seus produtos também são    
+        #quando o utilizador é eliminado os seus artigos também são    
         for artigo in utilizador_a_apagar.artigos_disponiveis:
             self.ListaArtigos.remove(artigo)
 
@@ -178,22 +192,22 @@ class FeiraVirtual:
 
         return False
 
-    #Apresenta todos os artigos disponíveis ordenados por preço
+    #Apresenta todos os artigos disponíveis ordenados por preço. Artigos iguais são exibidos apenas uma vez.
     def listar_artigos(self):
         artigosOrdenados = self.ordenarArtigosPorPreco(self.getArtigosUnicos())
         for j in artigosOrdenados:
             print(j.nome, j.preco)
 
-   #mostra os artigos do interesse do utilizador
+   #mostra os artigos do interesse do utilizador. Artigos iguais são exibidos apenas uma vez
     def listar_artigos_do_meu_interesse(self):
         artigosUnicos = self.getArtigosUnicos()
         artigosInteressantes = []
         for artigo in artigosUnicos:
             for interesse in self.TheUtilizador.interesses:
-                if interesse == artigo.tipologia: 
+                if interesse.lower() == artigo.tipologia.lower(): 
                     artigosInteressantes.append(artigo)
         
-        if len(artigosInteressantes) == 0:
+        if len(artigosInteressantes) == 0: #não existem artigos que correspondem aos interesses do utilizador
             return False
             
         
@@ -204,11 +218,11 @@ class FeiraVirtual:
 
         return True
 
-    #ordena os artigos por preço
+    #ordena os artigos da lista dada, por preço
     def ordenarArtigosPorPreco(self, listaDeArtigos):
         return sorted(listaDeArtigos, key=lambda x: float(x.preco))
 
-    #os artigos repetidos aparecem apenas uma vez
+    #Obtem uma lista com os nome únicos de artigos de todo o conjunto de artigos do mercado
     def getArtigosUnicos(self):
         nomesUnicos = []
         artigosUnicos = []
@@ -224,7 +238,7 @@ class FeiraVirtual:
 
         return artigosUnicos
 
-    #os vendedores são exibidos ao utilizador quando é selecionado um produto
+    #os vendedores são exibidos ao utilizador quando é selecionado um artigo. Para cada vendedor é mostrada a reputação, e a quantidade disponível do artigo em questão
     def exibir_Artigo_com_Vendedores(self, artigo):
         os.system('cls')
         print(artigo.nome, 'Preço:', artigo.preco)
@@ -251,7 +265,7 @@ class FeiraVirtual:
             os.system('cls')
             print(artigo.nome, ', Preço: ', artigo.preco, '\nVendedor:', vendedor.nome, '\nQuantidade disponível: ', artigo.quantidade, sep='')
             quantidade_a_comprar = int(input('\nQuantas unidades pretende comprar?' + self.userprompt))
-            if quantidade_a_comprar > int(artigo.quantidade):
+            if quantidade_a_comprar > int(artigo.quantidade) or quantidade_a_comprar < 0:
                 match input('Essa quantidade não está disponível! Pode:\n 1-Introduzir outro valor\n 2-Cancelar' + self.userprompt):
                     case '1':
                         continue
@@ -270,7 +284,7 @@ class FeiraVirtual:
             comprador.pycoins -= float(artigo.preco)*quantidade_a_comprar
             vendedor.pycoins += float(artigo.preco)*quantidade_a_comprar
             artigo.quantidade -= quantidade_a_comprar
-            #se o comprador comprar um artigo em que só exista 1 unidade no mercado, esse produto desaparece da lista de artigos
+            #se o comprador comprar um artigo em que só exista 1 unidade no mercado, esse artigo desaparece da lista de artigos
             if artigo.quantidade == 0:
                 self.ListaArtigos.remove(artigo)
                 vendedor.artigos_disponiveis.remove(artigo)
@@ -302,7 +316,7 @@ class FeiraVirtual:
             else:
                 comentario = ''
 
-            vendedor.deixar_avaliacao(avaliacoes, comentario)
+            vendedor.deixar_avaliacao(int(avaliacoes), comentario)
             #print(vendedor.avaliacoes_comentarios)
 
             os.system('cls')
@@ -315,6 +329,7 @@ class FeiraVirtual:
 
     #Calcula a reputação de um utilizador com base nas suas avaliações
     def calcular_reputacao(self, utilizador):
+        #print(utilizador.avaliacoes_comentarios)
         if utilizador.avaliacoes_comentarios == [['']]:
             return 'Este vendedor ainda não tem avaliações.'
         else:
@@ -358,10 +373,9 @@ class FeiraVirtual:
 
         print('O artigo foi adicionado com sucesso!') 
 
-        self.definir_Ajustes_preco_Procura(novoArtigo)
+        self.definir_Ajustes_preco_Procura(novoArtigo) #cena do mercado dinâmico
 
-        self.encontrar_compradores_interessados(novoArtigo)
-
+        self.encontrar_compradores_interessados(novoArtigo) #Encontra os nomes de utilizadores interessados no artigo recebido, de acordo com a sua tipologia
         return novoArtigo
 
 
@@ -371,12 +385,12 @@ class FeiraVirtual:
         cidadaosInteressados = []
         for cidadao in self.ListaUtilizadores:
             for i in cidadao.interesses:
-                if i == artigo.tipologia:
+                if i == artigo.tipologia: #verifica se a tipologia do artigo corresponde a algum dos interesses dos utilizadores
                     if cidadao.nome != self.TheUtilizador.nome:
                         cidadaosInteressados.append(cidadao)
                         break
         if len(cidadaosInteressados) != 0:
-            print('Existem utilizadores possivelmente interessados no seu produto:')
+            print('Existem utilizadores possivelmente interessados no seu artigo:')
             for cidadointeressado in cidadaosInteressados:
                 print(cidadointeressado.nome)
             
@@ -384,7 +398,7 @@ class FeiraVirtual:
 
     #Exporta a lista de artigos para um ficheiro ordenados por quantidade
     def exportar_artigos_preco(self, nome_ficheiro):
-        with open(nome_ficheiro, "w", encoding='utf-8') as file:
+        with open(nome_ficheiro, "w", encoding='utf-8') as file:#convertemos o ficheiro para o enconding 'utf-8' para conseguir ler acentos e não causar complicações no terminal/exportação para os ficheiros
             artigosOrdenados = sorted(self.ListaArtigos, key=lambda x: float(x.quantidade))
             for artigo in artigosOrdenados:
                 file.write(f"{artigo.nome};{artigo.preco};{artigo.tipologia};{artigo.quantidade};{artigo.vendedor}\n")
@@ -407,13 +421,14 @@ class FeiraVirtual:
 
                     infoArtigos.append(info)
                 
-            utilizadoresOrdenados = sorted(self.ListaUtilizadores, key=lambda x: float(x.reputacao), reverse=True)
+            utilizadoresOrdenados = sorted(self.ListaUtilizadores, key=lambda x: float(x.reputacao), reverse=True) #os utilizadores são ordenados por reputação
 
             for user in utilizadoresOrdenados:
                 file.write(f"{user.nome};{user.interesses};{infoArtigos};{user.reputacao}\n")
 
     #serve para escrever os utilizadores com os dados: artigos, interesses, pycoins, avaliações, comentários no ficheiro de entrada de dados.
     #o preço dos artigos é registado como o preço original/normal, sendo revertido o eventual ajuste de preço de acordo com o mercado dinâmico
+    #os dados são guardados no ficheiro de dados fornecido, no mesmo formato de registo, para ser lido e reusado.
     def exportar_tudo(self, nome_ficheiro):
         with open(nome_ficheiro, 'w', encoding='utf-8') as file:
             for user in self.ListaUtilizadores:
@@ -428,7 +443,7 @@ class FeiraVirtual:
                             preconormal = artigo.preco/1.25
                             
 
-                    artigos = artigos + f"{artigo.nome},{preconormal},{artigo.tipologia},{artigo.quantidade},{artigo.oferta}&"
+                    artigos = artigos + f"{artigo.nome},{preconormal},{artigo.tipologia},{artigo.quantidade}&"
                 artigos = artigos.strip('&')
                 artigos += ']'
 
@@ -436,10 +451,10 @@ class FeiraVirtual:
                 avaliacoes_comentarios = '['
                 for i in user.avaliacoes_comentarios:
                     try:
-                        avaliacoes_comentarios += f'{i[0]},{i[1]}&'
+                        avaliacoes_comentarios += f'{i[0]},{i[1]}&' #regista as avaliações e comentários na forma [av1,com1&av2,com2...]
                     except IndexError:
                         continue
-                avaliacoes_comentarios = avaliacoes_comentarios.strip('&')
+                avaliacoes_comentarios = avaliacoes_comentarios.strip('&') #retira o '&' do último conjunto avalições/comentários registado
                 avaliacoes_comentarios += ']'
 
                         
@@ -453,7 +468,7 @@ class FeiraVirtual:
             
     def getArtigo(self, nomeArtigo, nomeVendedor = ''): #devolve o artigo (objeto) em função do nome fornecido e do vendedor pretendido
         for artigo in self.ListaArtigos:                #se nao for indicado vendedor específico é devolvida a primeira ocorrência do artigo encontrada
-            if artigo.nome == nomeArtigo:
+            if artigo.nome.lower() == nomeArtigo.lower():
                 if nomeVendedor != '':
                     if artigo.vendedor == nomeVendedor:
                         return artigo
@@ -478,7 +493,9 @@ class FeiraVirtual:
                     case '2':
                         return
             
-    #representa a página do administrador, que apresenta um controlo geral sobre a FeiraVirtual    
+    #representa a página do administrador, que apresenta um controlo geral sobre a FeiraVirtual e sobre os utilizadores
+    #nesta página não se realizam compras ou vendas de artigos
+    #depois de cada escolha volta-se sempre à página do administrador, voltando a mostrar todas as opções do admin 
     def adminPage(self):
         os.system('cls')
         print("Bem vindo, Admin!\n" \
@@ -578,7 +595,7 @@ class FeiraVirtual:
                 self.adminPage()
             
             case '7':
-                return False
+                return False #volta ao início do programa('start') tendo as opções de LogIn, Criar conta ou Sair da FeiraVirtual(encerrar o programa)
 
     def getOcorrenciasArtigo(self, nomeArtigo):
                 ocorrenciasArtigo = []
@@ -589,26 +606,27 @@ class FeiraVirtual:
 
 #Início da feira. O grupo deve apresentar testes do projeto nesta função
 def main():
-    # voltarOuSair = "\n V - Voltar a trás \n S - Sair \n"
-    def start():
+    def start(): #esta é a página principal, a primeira interação na FeiraVirtual
+                 #pode fazer-se login como um utilizador ou como administrador
+                 #pode criar-se uma conta e posteriormente ser-se-á encaminhado para a 'home' logged in com a nova conta
         os.system('cls')
         print("Bem vindo à Feira Virtual. Pretende: \n 1-LogIn \n 2-Criar Conta \n 3-Sair da FeiraVirtual", end='')
         match input(TheFeira.userprompt):
             case '1':#LogIn
                 os.system('cls')
-                TheFeira.TheUtilizador = TheFeira.LogIn()
+                TheFeira.TheUtilizador = TheFeira.LogIn() #verifica se o nome inserido corresponde a um utilizador existente
                 if not TheFeira.TheUtilizador:
                     start()
-                if TheFeira.TheUtilizador == 'admin':
+                if TheFeira.TheUtilizador == 'admin': #verifa se o nome inserido corresponde ao administrador, para levar à página correspondente
                     if not TheFeira.adminPage():
                         start()
-                else:
+                else: #se o nome inserido corresponder a um utilizador existente é-se encaminhado para a 'home'
                     home()
             case '2': #registar utilizador/criar uma conta na FeiraVirtual
                 while True:
                     os.system('cls')
                     nome = input('Insira o seu primeiro nome. Será o seu nome de utilizador.' + TheFeira.userprompt)
-                    if TheFeira.getUser(nome):
+                    if TheFeira.getUser(nome): # não se pode inserir um nome que já exista na lista de utilizadores
                         match input('Já existe um utilizador com esse nome. Pode:\n 1-Introduzir outro nome\n 2-Cancelar' + TheFeira.userprompt):
                             case '1':
                                 continue
@@ -655,13 +673,13 @@ def main():
                 TheFeira.exportar_tudo('utilizadoresartigos.txt')
                 start()
 
-    #Aqui os utilizadores podem realizar compras
+    #Aqui os utilizadores podem ver os artigos disponíveis e realizar compras
     def verLoja():
         while True:
             os.system('cls')
-            print('Produtos disponíves na Loja:         PyCoins:', TheFeira.TheUtilizador.pycoins)
+            print('Artigos disponíves na Loja:         PyCoins:', TheFeira.TheUtilizador.pycoins)
             TheFeira.listar_artigos()
-            print('------\n Voltar: s\n Ver apenas produtos dos meus interesses: i\n Ver produto: escreva o nome do produto:', end='')
+            print('------\n Voltar: s\n Ver apenas artigos dos meus interesses: i\n Ver artigo: escreva o nome do artigo:', end='')
             escolha = input(TheFeira.userprompt)
             match escolha:
                 case 's':
@@ -673,14 +691,14 @@ def main():
                         input("'Enter' para voltar.")
                         continue
                     else:
-                        print('Voltar: s; Voltar a ver todos os produtos: i; Ver produto: escreva o nome do produto' )
+                        print('Voltar: s; Voltar a ver todos os artigos: i; Ver artigo: escreva o nome do artigo' )
                         escolha = input(TheFeira.userprompt)
                         match escolha:
-                            case 's':
+                            case 's': #se o utilizador introduzir 's' volta à página home
                                 home()
-                            case 'i':
+                            case 'i': #caso o utilizador introduza 'i' volta a ver todos os artigos disponíveis na FeiraVirtual
                                 verLoja()
-                            case _:
+                            case _: #caso o utilizador insira o nome de um artigo
                                 if not abrirArtigo(escolha):
                                     continue                  
                 case _:
@@ -699,20 +717,20 @@ def main():
             while True:
                 os.system('cls')
                 TheFeira.exibir_Artigo_com_Vendedores(artigoEscolhido)   
-                escolha = input("Escreva o nome do vendedor a que quer comprar o artigo, ou 's' para cancelar." + TheFeira.userprompt)
+                escolha = input("Escreva o nome do vendedor a quem quer comprar o artigo, ou 's' para cancelar." + TheFeira.userprompt)
                 match escolha:
                     case 's':
                         return False
                     case _:
                         vendedeiroEscolhido = TheFeira.getUser(escolha)
-                        if not vendedeiroEscolhido:
+                        if not vendedeiroEscolhido: #o nome inserido tem que corresponder a um vendedor existente na FeiraVirtual
                             match input('Não foi encontrado nenhum vendedor com esse nome. Pode:\n 1-Introduzir novamente\n 2-Voltar' + TheFeira.userprompt):
                                 case '1':
                                     continue
                                 case '2':
                                     break
                         else:
-                            #não é possível comprar um artigo que sejo do próprio utilizador
+                            #não é possível comprar um artigo que seja do próprio utilizador
                             if vendedeiroEscolhido.nome == TheFeira.TheUtilizador.nome:
                                 os.system('cls')
                                 input("Não pode comprar o seu próprio artigo! 'Enter' para continuar.")
@@ -727,7 +745,7 @@ def main():
                             else:
                                 home()
     #Neste espaço os utilizadores podem gerir a sua conta 
-    def espaçoPessoal(): #1-adicionar artigo,2-ver avaliações,3-alterar interesses,4-apagar conta
+    def espaçoPessoal(): 
         os.system('cls')
         print("Pretende aceder a:\n 1-Adicionar artigo\n 2-Ver os meus artigos disponíveis\n 3-Ver avaliações \n 4-Alterar interesses \n 5-Apagar conta \n 6-Voltar", end = '')
         escolha = input(TheFeira.userprompt)
@@ -737,17 +755,17 @@ def main():
                     TheFeira.colocar_artigo_para_venda(TheFeira.TheUtilizador.nome, input('Nome:'), input('Preço:'))
                     match input('Pretende:\n 1-Adicionar mais um artigo\n 2-Concluir' + TheFeira.userprompt):
                         case '1':
-                            continue
+                            continue #a função colocar_artigo_para_venda continua, podendo adicionar mais artigos até que se escolha concluir, escrevendo '2'
                         case '2':
                             break
                 espaçoPessoal()
-            case '2': #ver artigos
+            case '2': #mostra os artigos que o próprio utilizador tem disponíveis na FeiraVirtual
                 os.system('cls')
                 print('Estes são os artigos que tem à venda na FeiraVirtual:')
                 for meuArtigo in TheFeira.TheUtilizador.artigos_disponiveis:
                     print(' ', meuArtigo.nome)
                 
-                print('Pode:\n Escrever o nome do produto para ver e/ou editar detalhes\n v-Voltar')
+                print('Pode:\n Escrever o nome do artigo para ver e/ou editar detalhes\n v-Voltar')
                 escolha = input('>> ')
                 match escolha:
                     case 'v':
@@ -776,10 +794,10 @@ def main():
                                                 nomeAMostrar = g.vendedor
 
                                             textoVendedores += nomeAMostrar +'\n  Reputação:' + str(TheFeira.calcular_reputacao(vendedeiro)) +  '\n  Quantidade disponível:' + str(g.quantidade) + '\n'
-                                    if len(ocorrenciasArtigo) == 1: #só ha um vendedor, que será o próprio utilizador logged in
+                                    if len(ocorrenciasArtigo) == 1: #só há um vendedor, que será o próprio utilizador logged in
                                         textoVendedores = 'É o único vendedor deste artigo.'
                                     print(textoVendedores)
-            #alterar preço, quantidade, tipologia
+                            #pode editar-se um artigo, escrevendo o nome desse artigo: alterar preço, quantidade, tipologia
                             meuArtigo = TheFeira.getArtigo(escolha, TheFeira.TheUtilizador.nome)
                             print('Pode fazer alterações ao seu artigo ', meuArtigo.nome, ':\n 1-Alterar preço\n 2-Alterar quantidade\n 3-Alterar tipologia\n v-Voltar', end='', sep='')       
                             escolha2 = input(TheFeira.userprompt)
@@ -791,9 +809,9 @@ def main():
                                     continue
                                 case '2':#altera a quatidade do artigo
                                     meuArtigo.editar_quantidade(int(input('Insira a nova quantidade do seu artigo.\n>>')))
-                                    TheFeira.definir_Ajustes_preco_Procura(meuArtigo)
+                                    TheFeira.definir_Ajustes_preco_Procura(meuArtigo)#o preço do artigo é alterado de acordo com a quantidade
                                     os.system('cls')
-                                    if meuArtigo.quantidade == 0:
+                                    if meuArtigo.quantidade == 0:#se a quantidade do artigo for alterada para 0, o artigo é removido da lista de artigos
                                         TheFeira.ListaArtigos.remove(meuArtigo)
                                         TheFeira.TheUtilizador.artigos_disponiveis.remove(meuArtigo)
                                         break
@@ -822,7 +840,7 @@ def main():
                 home()
             case _:
                 pass
-    TheFeira.exportar_tudo('utilizadoresartigos.txt')#é exportada toda a informação pertinente para o ficheiro de texto 'utilizadoresartigos.txt'
+    TheFeira.exportar_tudo('utilizadoresartigos.txt')#é exportada toda a informação pertinente para o ficheiro de texto 'utilizadoresartigos.txt', para ser acedida aquando de executar a FeiraVirtual de BuGigAnGas novamente  
     start()
 
     

@@ -8,7 +8,7 @@ Página start:
         É criada uma nova conta com:
         Nome (do utilizador) - tem de ser diferente dos já existentes.
         Interesses - introduzidos um de cada vez, concluindo ao introduzir 's'.
-        Artigos disponíves - é dada a opção de adicionar artigos, se escolhida passa à página novo_artigo. Concluído o processo, é dada a opção de adicionar mais um produto. O processo repete-se até ser escolhido não adicionar mais um produto.
+        Artigos disponíves - é dada a opção de adicionar artigos, se escolhida passa à sequência novo artigo**. Concluído o processo, é dada a opção de adicionar mais um produto. O processo repete-se até ser escolhido não adicionar mais um produto.
         Terminada a criação da conta, passa à página home, com o novo utilizador logged in.
     Sair da FeiraVirtual
         Termina a execução do programa.
@@ -26,19 +26,19 @@ Página start:
                             Voltar a ver todos os produtos, ao introduzir 'i'
                                 Volta a ver a lista normal
                             Ver produto, ao escrever o nome do produto na lista
-                                Abre a página ver produto, na versão de navegar loja
+                                Abre a página ver produto*, na versão de navegar loja
                     Ver produto, ao escrever o nome do produto na lista
-                        Abre a página de ver produto
+                        Abre a página de ver produto*, ma versão de navegar loja
 
 
             Espaço pessoal
                 Nesta página estão as opções e ações de caráter pessoal do utilizador logged in:
                     Adicionar artigo
-                        Leva para a sequência novo_artigo
+                        Leva para a sequência novo artigo**
                     Ver os meus artigos disponíveis
                         É exibida a lista dos artigos (nome) vendidos pelo utilizador. São dadas as opções:
                             Escrever o nome do produto para ver e/ou editar detalhes
-                                Abre a página ver produto, na versão do espaço pessoal
+                                Abre a página ver produto*, na versão do espaço pessoal
                             Voltar
                                 Volta à página Espaço pessoal  
                     Ver avaliações
@@ -51,9 +51,29 @@ Página start:
                         Volta para a página home
             Sair
                 Volta à página start
+        Como admin as opções são:
+            Eliminação de conta de um utilizador
+                É introduzido o nome de utilizador a ser eliminado.
+            Lista de utilizadores
+                Passa para uma página com as opções:
+                    Mostrar a lista de utilizadores
+                        Exibe numa nova página os nomes de todos os utilizadores
+                    Exportar a lista de utilizadores
+                        Exporta para o ficheiro 'utilizadores.txt', todos os utilizadores com os dados nome, interesses, artigos (nome, preço, tipologia, quantidade), reputação. São registados por ordem decrescente de reputação. Os preços dos artigos são registados sem o ajuste conforme a oferta.
+            Exportar todos os artigos
+                Exporta para p ficheiro 'artigos.txt' todos os artigos com os dados nome, preço, tipologia, quantidade, vendedor (nome). Os preços dos artigos são registados sem o ajuste conforme a oferta.
+            Mostrar artigos de um utilizador
+                É introduzido o nome de um utilizador. De seguida são apresentados os nomes dos seus artigos disponíveis.
+            Mostrar interesses de um utilizador
+                É introduzido o nome de um utilizador. De seguida são apresentados seus interesses.
+            Mostrar Pycoins de um utilizador
+                É introduzido o nome de um utilizador. De seguida são apresentadas as suas pycoins.
+            Voltar
+                Volta para a página start
 
 
-Página ver produto
+
+*Página ver produto
     Nesta página é exibido o nome e preço do produto (ajustado à oferta), e todos os seus vendedores. Os vendedores aparecem com o nome, a reputação, e a quantidade do artigo que têm disponível. As opções nesta página são, conforme a entrada nesta página:
         Entrada ao navegar loja:
             Comprar o artigo, ao escrever o nome do vendedor a que pretende comprar
@@ -68,7 +88,7 @@ Página ver produto
 
 
 
-Sequência novo_artigo
+**Sequência novo artigo
     Esta é uma sequência de inputs para adicionar um novo artigo ao mercado:
         Nome - introduzir o nome do artigo. É o nome que é verificado para considerar este artigo igual a outros no mercado
         Preço - introduzir o preço do artigo. Pode ser introduzido qualquer preço, mas, ao finalizar criar o artigo, se existirem produtos iguais no mercado com preço menor, o novo produto assume este preço, e vice-versa.
